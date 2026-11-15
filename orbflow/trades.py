@@ -39,6 +39,9 @@ def main(argv=None):
     a_add.add_argument("--at", default=None)
     a_add.add_argument("--gold", type=int, default=None)
     a_add.add_argument("--note", default="")
+    a_gold = sub.add_parser("gold", help="set gold cost of an existing trade")
+    a_gold.add_argument("id", type=int)
+    a_gold.add_argument("gold", type=int)
     for c in ("fill", "cancel"):
         p = sub.add_parser(c)
         p.add_argument("id", type=int)
@@ -55,6 +58,8 @@ def main(argv=None):
     elif a.cmd in ("fill", "cancel"):
         con.execute("UPDATE trades SET status=?, filled_at=? WHERE id=?",
                     ("filled" if a.cmd == "fill" else "cancelled", a.at or _now(), a.id))
+    elif a.cmd == "gold":
+        con.execute("UPDATE trades SET gold=? WHERE id=?", (a.gold, a.id))
     elif a.cmd == "list":
         for r in con.execute("SELECT * FROM trades ORDER BY id"):
             print(dict(r))
@@ -62,6 +67,12 @@ def main(argv=None):
         for r in con.execute("SELECT * FROM trades WHERE status='filled'"):
             mins = (dt.datetime.fromisoformat(r["filled_at"]) - dt.datetime.fromisoformat(r["placed_at"])).total_seconds() / 60
             print(f"#{r['id']} want {r['want_qty']:g} {r['want']} for {r['give_qty']:g} {r['give']}: filled in {mins:.0f} min")
+        from .chains import gold_per_ex, load
+        _, rates, _ = load(con, "Forbidden Rites")
+        k, n = gold_per_ex(con, rates)
+        print(f"gold fee estimate: {k:.0f} gold per ex of order value ({n} observations)")
+        for r in con.execute("SELECT * FROM trades WHERE gold IS NOT NULL"):
+            print(f"  #{r['id']} {r['give_qty']:g} {r['give']} -> {r['want_qty']:g} {r['want']}: {r['gold']} gold")
     con.commit()
 
 

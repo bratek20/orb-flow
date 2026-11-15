@@ -29,6 +29,23 @@ from .db import connect
 MONEY = ("exalted", "chaos", "divine")
 FILL_SHARE = 0.5   # calibrate! first data point (regal ex bid) suggested ~0.7-1.0
 HAIRCUT = 0.15     # we will not get the average price on both legs; leave room
+DEFAULT_GOLD_PER_EX = 120.0  # gold fee per ex of order value; 1st observation: 57k gold for a 478-ex order
+
+
+def gold_per_ex(con, rates):
+    """Calibrate the gold fee from logged trades that have a gold cost and a money-currency side.
+    Model: fee = k * (order value in ex). Returns (k, n_observations)."""
+    obs = []
+    try:
+        rows = con.execute("SELECT * FROM trades WHERE gold IS NOT NULL AND gold > 0").fetchall()
+    except Exception:
+        rows = []
+    for r in rows:
+        for cur, qty in ((r["want"], r["want_qty"]), (r["give"], r["give_qty"])):
+            if cur in rates and qty:
+                obs.append(r["gold"] / (qty * rates[cur]))
+                break
+    return (st.median(obs), len(obs)) if obs else (DEFAULT_GOLD_PER_EX, 0)
 
 
 def load(con, league, last_n=24):
@@ -67,8 +84,10 @@ def market_stats(samples, n_snaps):
     return {"price": value / units, "units_h": st.median(per_hour), "hours_seen": len(samples)}
 
 
-def find_chains(con, league, budget_ex=100.0, min_gap=1.3, min_units_h=20, max_hours=24):
+def find_chains(con, league, budget_ex=100.0, min_gap=1.3, min_units_h=20, max_hours=24, gold_k=None):
     legs, rates, n = load(con, league)
+    if gold_k is None:
+        gold_k, _ = gold_per_ex(con, rates)
     by_item = collections.defaultdict(dict)
     for (item, money), s in legs.items():
         ms = market_stats(s, n)
@@ -95,6 +114,9 @@ def find_chains(con, league, budget_ex=100.0, min_gap=1.3, min_units_h=20, max_h
                 sell_h = qty / (FILL_SHARE * s["units_h"])
                 net = qty * (s["price"] - b["price"]) * (1 - HAIRCUT) - qty * b["price"] * HAIRCUT
                 hours = buy_h + sell_h
+                gold_buy = qty * b["price"] * gold_k          # buy order: value of what we pay
+                gold_sell = qty * s["price"] * gold_k         # sell order: value of what we receive
+                gold = gold_buy + gold_sell
                 if hours > max_hours or net <= 0:
                     continue
                 out.append({
@@ -103,9 +125,11 @@ def find_chains(con, league, budget_ex=100.0, min_gap=1.3, min_units_h=20, max_h
                     "buy_h": buy_h, "sell_h": sell_h, "ex_per_h": net / max(hours, 0.25),
                     "buy_units_h": b["units_h"], "sell_units_h": s["units_h"],
                     "seen": min(b["hours_seen"], s["hours_seen"]), "snaps": n,
+                    "gold": gold, "gold_buy": gold_buy, "gold_sell": gold_sell,
+                    "ex_per_kgold": net / max(gold / 1000, 1e-9),
                 })
     out.sort(key=lambda r: -r["ex_per_h"])
-    return out, rates
+    return out, rates, gold_k
 
 
 def main(argv=None):
@@ -115,17 +139,23 @@ def main(argv=None):
     ap.add_argument("--min-gap", type=float, default=1.3)
     ap.add_argument("--max-hours", type=float, default=24)
     ap.add_argument("--top", type=int, default=30)
+    ap.add_argument("--sort", choices=["ex_per_h", "ex_per_kgold", "net_ex"], default="ex_per_h",
+                    help="ex_per_kgold when gold is the bottleneck")
+    ap.add_argument("--gold-per-ex", type=float, default=None, help="override the calibrated gold fee")
     a = ap.parse_args(argv)
     con = connect()
-    rows, rates = find_chains(con, a.league, a.budget, a.min_gap, max_hours=a.max_hours)
-    print(f"rates: chaos={rates.get('chaos', 0):.1f} ex, divine={rates.get('divine', 0):.0f} ex | "
-          f"budget {a.budget:.0f} ex | FILL_SHARE={FILL_SHARE} HAIRCUT={HAIRCUT}")
-    print(f"{'item':30s} {'buy':>7s} {'@ex':>7s} {'sell':>7s} {'@ex':>7s} {'gap':>5s} "
-          f"{'qty':>5s} {'cost':>6s} {'net':>6s} {'buyH':>5s} {'sellH':>5s} {'ex/h':>6s} seen")
+    rows, rates, gk = find_chains(con, a.league, a.budget, a.min_gap, max_hours=a.max_hours, gold_k=a.gold_per_ex)
+    _, nobs = gold_per_ex(con, rates)
+    rows.sort(key=lambda r: -r[a.sort])
+    print(f"rates: chaos={rates.get('chaos', 0):.1f} ex, divine={rates.get('divine', 0):.0f} ex | budget {a.budget:.0f} ex | "
+          f"gold fee {gk:.0f}/ex of order value ({nobs} logged obs) | FILL_SHARE={FILL_SHARE} HAIRCUT={HAIRCUT}")
+    print(f"{'item':28s} {'buy':>7s} {'@ex':>7s} {'sell':>7s} {'@ex':>7s} {'gap':>5s} {'qty':>5s} {'cost':>5s} "
+          f"{'net':>6s} {'buyH':>5s} {'sellH':>5s} {'ex/h':>6s} {'goldBuy':>8s} {'goldSell':>8s} {'ex/kG':>6s}")
     for r in rows[:a.top]:
-        print(f"{r['item'][:30]:30s} {r['buy_with'][:7]:>7s} {r['buy_ex']:7.2f} {r['sell_for'][:7]:>7s} "
-              f"{r['sell_ex']:7.2f} {r['gap']:5.1f} {r['qty']:5d} {r['cost_ex']:6.0f} {r['net_ex']:6.0f} "
-              f"{r['buy_h']:5.1f} {r['sell_h']:5.1f} {r['ex_per_h']:6.0f} {r['seen']}/{r['snaps']}")
+        print(f"{r['item'][:28]:28s} {r['buy_with'][:7]:>7s} {r['buy_ex']:7.2f} {r['sell_for'][:7]:>7s} "
+              f"{r['sell_ex']:7.2f} {r['gap']:5.1f} {r['qty']:5d} {r['cost_ex']:5.0f} {r['net_ex']:6.0f} "
+              f"{r['buy_h']:5.1f} {r['sell_h']:5.1f} {r['ex_per_h']:6.0f} {r['gold_buy']:8.0f} {r['gold_sell']:8.0f} "
+              f"{r['ex_per_kgold']:6.2f}")
 
 
 if __name__ == "__main__":
