@@ -47,3 +47,9 @@
   is ~1300 regal per div, so a 1:50 or 1:70 bid will never fill.
 - Lesson: the per-pair "units traded" from poe2scout can't be read as a price for the div legs of cheap items.
   Don't trust the cross_pair scanner until it is validated against the GGG ratio data.
+
+## Live experiments
+| # | placed (local) | order | status | notes |
+|---|---|---|---|---|
+| 1 | 2026-11-15 09:45 | buy Regal with ~100 ex at ~2.45 regal/ex (bid) | open, 0 fill after 15 min | regal/ex pair trades ~500-1000 regal/h (API) |
+| 2 | 2026-11-15 ~10:00 | give 80 Regal for 1 Div | open | based on bad API div-leg data; fair value is ~1300 regal/div, so a fill is very unlikely |
