@@ -22,7 +22,7 @@ No scheduled tasks. Data is only downloaded while we work.
 - `python -m orbflow.scan`: raw cross-pair gaps. `journal`: advice log and grading. `backtest`: v0 harness
 
 ## Player context
-- Starting budget: 100 ex for experiments (holds ~50 chaos total). Gold: ~1.4M, so not a constraint yet.
+- Started with a 100 ex budget (~50 chaos total). Gold: ~1.4M at start. The gold fee is per unit WANTED (see FINDINGS).
 - Wants to start small, verify each strategy in game, then scale up.
 - Analysis only: never automate in-game actions (GGG ToS).
 
@@ -31,3 +31,13 @@ No scheduled tasks. Data is only downloaded while we work.
 - Pair "units traded per hour" ratios often disagree with the live in-game book (see FINDINGS).
   Treat API numbers as leads and ask the player for live ratios before recommending real trades.
 - Python stdlib only; run modules as `python -m orbflow.<module>` from the repo root.
+
+## Where we left off (2026-11-15)
+- Confirmed edge: cheap items trade far below value vs Exalted and well above it vs Chaos/Divine.
+  Regal loop (ex bid ~2.45 regal/ex, then sell ~80-82 regal/div) and GCP (buy ~15-20 ex, sell 1:1 chaos) both worked live.
+- Open order: trade #8, 492 regal -> 6 div (4800 gold). Ask how it went and log the fill (`trades fill 8 --at ...`).
+- Fill times for trades #1/#2 were logged with guessed clock times.
+- Suggested next test: Omen of the Ancients (buy with ex ~4-4.5, sell for div ~112). Need its per-unit gold fee.
+- Backlog: GGG cxapi OAuth application (player is open to it; draft the email), calibrate FILL_SHARE
+  from the trades table, persistence check of chains across many snapshots, cut sell prices for div sales
+  to market (55-82 regal/div range seen).
