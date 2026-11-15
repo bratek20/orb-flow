@@ -67,12 +67,11 @@ def main(argv=None):
         for r in con.execute("SELECT * FROM trades WHERE status='filled'"):
             mins = (dt.datetime.fromisoformat(r["filled_at"]) - dt.datetime.fromisoformat(r["placed_at"])).total_seconds() / 60
             print(f"#{r['id']} want {r['want_qty']:g} {r['want']} for {r['give_qty']:g} {r['give']}: filled in {mins:.0f} min")
-        from .chains import gold_per_ex, load
-        _, rates, _ = load(con, "Forbidden Rites")
-        k, n = gold_per_ex(con, rates)
-        print(f"gold fee estimate: {k:.0f} gold per ex of order value ({n} observations)")
+        from .chains import gold_table
+        print("gold per unit WANTED:", gold_table(con))
         for r in con.execute("SELECT * FROM trades WHERE gold IS NOT NULL"):
-            print(f"  #{r['id']} {r['give_qty']:g} {r['give']} -> {r['want_qty']:g} {r['want']}: {r['gold']} gold")
+            print(f"  #{r['id']} want {r['want_qty']:g} {r['want']} (give {r['give_qty']:g} {r['give']}): "
+                  f"{r['gold']} gold = {r['gold'] / r['want_qty']:.0f}/unit")
     con.commit()
 
 

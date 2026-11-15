@@ -75,3 +75,16 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
   both legs are maker orders (patience) and each order costs gold.
 - Gold could become the binding constraint: ~57k gold for a 478-ex order (~120 gold per ex of value?).
   Gold cost of every order needs logging.
+
+## 2026-11-15: gold fee model (6 logged orders)
+**fee = units you WANT x per-unit gold of the wanted item.** The item you give and the order's value don't matter.
+| wanted item | gold per unit | gold per ex of value |
+|---|---|---|
+| Exalted | 120 | 120 (expensive: avoid *wanting* ex) |
+| Regal | 120 | ~290 at 0.41 ex |
+| Chaos | 160 | ~2.7 |
+| Gemcutter's Prism | 1000 | ~20-50 |
+| Divine | ? (guess 300) | probably tiny |
+- The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
+- Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
+- Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
