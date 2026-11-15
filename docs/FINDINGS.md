@@ -53,4 +53,13 @@
 |---|---|---|---|---|
 | 1 | 2026-11-15 09:45 | buy Regal with ~100 ex at ~2.45 regal/ex (bid) | FILLED ~20-25 min after placing | buy side filled fast with a thin bid book (15 stock ahead) |
 | 2 | 2026-11-15 ~10:00 | give 80 Regal for 1 Div | open | based on bad API div-leg data; fair value is ~1300 regal/div, so a fill is very unlikely |
-| 3 | 2026-11-15 (after #1 filled) | sell ~245 Regal at ~2.05 regal/ex (ask) | to place | target ~119 ex back, about +19% |
+| 3 | 2026-11-15 (after #1 filled) | sell 245 Regal for 478 ex (1.95 ex/regal), first in the sell queue ahead of a 2:1 wall of 5200 | placing, 57k gold fee | bought for 100 ex, so +378 ex if filled |
+
+### CORRECTION 2026-11-15: UI ratio direction
+The exchange UI shows ratios as **want : have**. In the sell window (want ex, have regal) the wall is
+2:1 = **2 ex per regal**. So in the buy window, "available 1:2" meant 1 regal for 2 ex (ask ~2 ex), not
+2 regals per ex. The real Regal/ex book is **bid ~0.41 ex vs ask ~2 ex**, a ~5x spread. My earlier
+"regal ≈ 0.45 ex" was wrong. Experiment 1 bought 245 regal for 100 ex: a seller dumped into the bid.
+- That would put a regal at 2 ex in the ex market vs ~7.5 ex in the div market (ninja 81 regal/div), so the
+  ex<->div cross-pair gap may be partly real after all. Experiment 2 (80 regal -> 1 div) is not hopeless.
+- Gold fee seen: ~57k gold for an order worth ~478 ex.
