@@ -1,0 +1,9 @@
+id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
+1,2026-11-15T09:45,2026-11-15T10:08,filled,regal,245.0,exalted,100.0,29400,bid 2.45 regal/ex
+2,2026-11-15T10:00,2026-11-15T10:08,filled,divine,1.0,regal,80.0,,80 regal -> 1 div
+3,2026-11-15T10:08,,open,exalted,478.0,regal,245.0,57360,"ask 1.95 ex/regal, first in queue"
+4,2026-11-15T10:20,,open,exalted,480.0,chaos,8.0,57600,player wrote 480-80; 8 chaos assumed (~60 ex/chaos)
+5,2026-11-15T10:20,,open,chaos,21.0,gcp,20.0,3360,sell GCP 20 -> 21 chaos
+6,2026-11-15T10:20,,open,gcp,14.0,exalted,208.0,14000,buy GCP ~14.9 ex each
+7,2026-11-15T10:20,,open,exalted,240.0,chaos,4.0,28800,
+8,2026-11-15T10:31,,open,divine,6.0,regal,492.0,4800,sell regals 82/div
