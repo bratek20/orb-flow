@@ -37,3 +37,13 @@
   (ex pair: ~0.6-1.06 ex/regal, chaos pair: ~5.8 ex/regal), so they can't be trusted without the live book.
 - Next check: the *available* trades in the Regal->Divine market (someone handing over a div for
   N regals). If N regals cost far less than 1 div through the ex market, the chain is real.
+
+## 2026-11-15: live Regal books (player reading)
+- Book where you give ex and get Regal: **available 1:2 (stock 1782)**, **competing 2.47:1 (stock 15)**.
+  A book can't be crossed, so the only consistent reading is that sellers give 2 regal per ex (ask = 0.50 ex)
+  and buyers bid 2.47 regal per ex (bid = 0.405 ex). **Regal ≈ 0.40-0.50 ex, spread ≈ 23%.**
+  -> The ex-pair API numbers (~0.6-1 ex) were roughly right. The div-pair numbers (55-68 regal/div ≈ 9-11 ex/regal) are not.
+- Book where you give Regal and get Div: only **1:500, stock 3** available. Fair value at 0.45 ex/regal
+  is ~1300 regal per div, so a 1:50 or 1:70 bid will never fill.
+- Lesson: the per-pair "units traded" from poe2scout can't be read as a price for the div legs of cheap items.
+  Don't trust the cross_pair scanner until it is validated against the GGG ratio data.
