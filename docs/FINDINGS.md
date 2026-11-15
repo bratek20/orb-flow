@@ -84,7 +84,7 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 | Regal | 120 | ~290 at 0.41 ex |
 | Chaos | 160 | ~2.7 |
 | Gemcutter's Prism | 1000 | ~20-50 |
-| Divine | ? (guess 300) | probably tiny |
+| Divine | 800 | ~1.3 (cheapest way to sell) |
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
