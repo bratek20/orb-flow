@@ -51,5 +51,6 @@
 ## Live experiments
 | # | placed (local) | order | status | notes |
 |---|---|---|---|---|
-| 1 | 2026-11-15 09:45 | buy Regal with ~100 ex at ~2.45 regal/ex (bid) | open, 0 fill after 15 min | regal/ex pair trades ~500-1000 regal/h (API) |
+| 1 | 2026-11-15 09:45 | buy Regal with ~100 ex at ~2.45 regal/ex (bid) | FILLED ~20-25 min after placing | buy side filled fast with a thin bid book (15 stock ahead) |
 | 2 | 2026-11-15 ~10:00 | give 80 Regal for 1 Div | open | based on bad API div-leg data; fair value is ~1300 regal/div, so a fill is very unlikely |
+| 3 | 2026-11-15 (after #1 filled) | sell ~245 Regal at ~2.05 regal/ex (ask) | to place | target ~119 ex back, about +19% |
