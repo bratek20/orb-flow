@@ -25,3 +25,15 @@
 ### Open questions for the player
 - In game, what are the live ratios for Regal↔Exalted and Regal↔Divine (and Alchemy↔Exalted and Alchemy↔Chaos)?
 - How much gold is available? It caps how many orders can be placed.
+
+## 2026-11-15 (later): first in-game ground truth (Regal Orb)
+- Player saw **Regal<->Exalted at 2.47 (available) vs 2.48 (competing)**: practically no spread.
+  That book is efficient, so there is nothing to flip there. (The direction of the 2.47 still needs confirming.)
+- Player saw **50 Regal -> 1 Divine** as the best competing offer, and it is not filling.
+- API, last 2 hourly snapshots, Regal vs Divine: 5082 regal / 92 div, then 4382 / 64,
+  i.e. **55-68 regals per div actually traded**, about 4-5k regals/hour. So it is NOT a dead
+  market. The 50:1 order asks for more than the market pays, and sellers offering 55-70 per div fill first.
+- poe.ninja says regal = 7.45 ex (81 regal/div). The API-implied prices still disagree with each other
+  (ex pair: ~0.6-1.06 ex/regal, chaos pair: ~5.8 ex/regal), so they can't be trusted without the live book.
+- Next check: the *available* trades in the Regal->Divine market (someone handing over a div for
+  N regals). If N regals cost far less than 1 div through the ex market, the chain is real.
