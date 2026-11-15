@@ -52,7 +52,7 @@
 | # | placed (local) | order | status | notes |
 |---|---|---|---|---|
 | 1 | 2026-11-15 09:45 | buy Regal with ~100 ex at ~2.45 regal/ex (bid) | FILLED ~20-25 min after placing | buy side filled fast with a thin bid book (15 stock ahead) |
-| 2 | 2026-11-15 ~10:00 | give 80 Regal for 1 Div | open | based on bad API div-leg data; fair value is ~1300 regal/div, so a fill is very unlikely |
+| 2 | 2026-11-15 ~10:00 | give 80 Regal for 1 Div | **FILLED** (~10:40) | 80 regal bought at 0.41 ex (~33 ex) became 1 div (~600 ex) |
 | 3 | 2026-11-15 (after #1 filled) | sell 245 Regal for 478 ex (1.95 ex/regal), first in the sell queue ahead of a 2:1 wall of 5200 | placing, 57k gold fee | bought for 100 ex, so +378 ex if filled |
 
 ### CORRECTION 2026-11-15: UI ratio direction
@@ -63,3 +63,15 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 - That would put a regal at 2 ex in the ex market vs ~7.5 ex in the div market (ninja 81 regal/div), so the
   ex<->div cross-pair gap may be partly real after all. Experiment 2 (80 regal -> 1 div) is not hopeless.
 - Gold fee seen: ~57k gold for an order worth ~478 ex.
+
+## 2026-11-15: the cross-currency pattern is REAL (two live confirmations)
+- Regal: ex market bid 0.41 ex, sold 80 regal for 1 div (7.5 ex each), about 18x.
+- Gemcutter's Prism (player's own trade): bought at 20 ex, sold 1:1 for chaos (~58 ex), about 2.9x.
+- API for GCP agrees: ex pair ~20 ex, chaos pair ~29-38 ex, div pair ~41-46 ex.
+- So the original cross_pair scanner was right and my "it's an artifact" call was wrong. The new
+  `orbflow.chains` ranks these chains by ex/hour, with fill-time estimates.
+- Working hypothesis: Exalted is the "small change" currency. Mappers dump cheap currency into ex bids, while
+  crafters buy the same items in bulk with chaos/div at much higher prices. The gap survives because
+  both legs are maker orders (patience) and each order costs gold.
+- Gold could become the binding constraint: ~57k gold for a 478-ex order (~120 gold per ex of value?).
+  Gold cost of every order needs logging.
