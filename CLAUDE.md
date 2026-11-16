@@ -33,7 +33,7 @@ No scheduled tasks. Data is only downloaded while we work.
 - Python stdlib only; run modules as `python -m orbflow.<module>` from the repo root.
 
 ## Where we left off (2026-11-16)
-- Player made +30 div with the ex -> regal -> div loop. Now holds 34 div, 1239 regal, 454 ex. Current gold unknown (ask).
+- Player made +30 div with the ex -> regal -> div loop. Now holds 34 div, 1239 regal, 454 ex. Gold ~1.0M (spent ~400k for the +30 div, ~13.3k gold per div).
 - Proposed next: test Omen of Chaotic Rarity (buy with ex ~60, sell for chaos/div ~300-390) and chaos-funded
   Omen of Abyssal Echoes (buy with chaos ~24 ex, sell for div ~52). Need per-unit gold fee for omens.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.

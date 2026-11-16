@@ -119,3 +119,8 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   Their gold per div of profit is 3-12k IF the item fee is ~300/unit (unknown). That's the next thing to measure.
 - Regal stays far ahead on profit per div of capital (+16.8 div per div in). Chaos rounds are about +0.2-1.3 div per div in.
   With 34 div of capital and gold now the scarce input, the per-gold ranking matters most.
+
+## 2026-11-16: gold check against reality
+- Player gold: ~1.4M -> ~1.0M over the +30 div session: **~400k gold for ~30 div = ~13.3k gold per div of profit**.
+  The model predicts 10.6k (with ex on hand) to 15.5k (ex bought with div), so it is consistent.
+- Runway at the regal loop: ~1.0M / 13-15.5k ≈ **65-75 more div** before gold runs out.
