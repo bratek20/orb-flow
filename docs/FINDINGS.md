@@ -155,3 +155,5 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Sells for div at ~1.5-1.6 div (ninja ~955 ex). Round: ~2.8k gold per div of profit, about 5x better than regal.
 - 2026-11-16 later: the in-game price moved to 2.4 echoes per chaos (~26 ex each). Round at 8/div: 9.5 chaos -> 22.8 echoes -> 2.85 div,
   +1.85 div, gold 26.6k (echo leg 22.8k) = **14.4k gold per div of profit**, about the same as regal. At 9/div: ~17k (worse).
+  Correction from the player: the book is competing (buyers) 2.9 echoes/chaos, available (instant) 2.5. Our 2.8 bid sits ahead
+  of the 2.9 queue. Instant buy at 2.5 -> ~14.0k gold per div of profit (sell at 8/div).
