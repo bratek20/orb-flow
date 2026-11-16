@@ -8,3 +8,4 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 7,2026-11-15T10:20,,open,exalted,240.0,chaos,4.0,28800,
 8,2026-11-15T10:31,2026-11-15T12:00,filled,divine,6.0,regal,492.0,4800,sell regals 82/div
 9,2026-11-15T12:00,2026-11-16T16:00,filled,divine,30.0,regal,2460.0,,"AGGREGATE of several hours of ex->regal->div cycling (player summary): +30 div profit, ~30 min waits per leg. End holdings 34 div, 1239 regal, 454 ex"
+10,2026-11-16T17:21,,open,omen-of-abyssal-echoes,28.0,chaos,10.0,28000,"buy echoes 2.8/chaos, plan sell for div ~11/div"

@@ -85,6 +85,7 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 | Chaos | 160 | ~2.7 |
 | Gemcutter's Prism | 1000 | ~20-50 |
 | Divine | 800 | ~1.3 (cheapest way to sell) |
+| Omen of Abyssal Echoes | 1000 | ~45 at ~22 ex |
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
@@ -124,3 +125,10 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Player gold: ~1.4M -> ~1.0M over the +30 div session: **~400k gold for ~30 div = ~13.3k gold per div of profit**.
   The model predicts 10.6k (with ex on hand) to 15.5k (ex bought with div), so it is consistent.
 - Runway at the regal loop: ~1.0M / 13-15.5k ≈ **65-75 more div** before gold runs out.
+
+## 2026-11-16: Omen of Abyssal Echoes test
+- Buy order: 28 echoes for 10 chaos (2.8 per chaos, ~22 ex each). Gold fee **1000 per omen** (28k).
+- Round at 11 echoes/div: +1.42 div per div in, **21.2k gold per div of profit**, worse than regal (13-15.5k).
+  At 9 per div: 15.6k, about equal to regal. Gold-wise it is not an upgrade at this unit price.
+- Pattern: GCP and echoes are both 1000/unit. If catalysts/infusers are also ~1000, items worth 500-1300 ex
+  would cost only ~1-2 gold per ex. That's the real gold-saver to test next.
