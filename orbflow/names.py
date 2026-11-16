@@ -56,7 +56,7 @@ _RULES = [
     (r"^lesser-", "l-"),
     (r"^orb-of-", ""),
     (r"-orb$", ""),
-    (r"(^|-)essence-of-(the-)?", r"ess-"),
+    (r"(^|-)essence-of-(the-)?", lambda m: m.group(1) + "ess-"),
 ]
 
 
