@@ -47,9 +47,11 @@ def main(argv=None):
     con = connect()
     from .chains import load
     _, rates, _ = load(con, a.league)
-    for item in a.items:
+    from .names import resolve
+    for item in map(resolve, a.items):
         mk, n = market_rows(con, a.league, item)
-        print(f"\n{item}  ({n} hourly snapshots collected, qty={a.qty:g})")
+        from .names import short
+        print(f"\n{short(item)} = {item}  ({n} hourly snapshots collected, qty={a.qty:g})")
         print(f"  {'market':8s} {'units/h med (min-max)':>24s} {'price ex':>9s} {'stock':>7s} {'front h':>8s} {'back h':>7s}")
         for money, xs in sorted(mk.items()):
             per_h = [x[1] for x in xs] + [0] * (n - len(xs))

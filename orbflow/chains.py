@@ -159,7 +159,8 @@ def main(argv=None):
     print(f"{'item':28s} {'buy':>7s} {'@ex':>7s} {'sell':>7s} {'@ex':>7s} {'gap':>5s} {'qty':>5s} {'cost':>5s} "
           f"{'net':>6s} {'buyH':>5s} {'sellH':>5s} {'ex/h':>6s} {'goldBuy':>8s} {'goldSell':>8s} {'ex/kG':>6s}")
     for r in rows[:a.top]:
-        print(f"{r['item'][:28]:28s} {r['buy_with'][:7]:>7s} {r['buy_ex']:7.2f} {r['sell_for'][:7]:>7s} "
+        from .names import short
+        print(f"{short(r['item'])[:28]:28s} {short(r['buy_with'])[:7]:>7s} {r['buy_ex']:7.2f} {short(r['sell_for'])[:7]:>7s} "
               f"{r['sell_ex']:7.2f} {r['gap']:5.1f} {r['qty']:5d} {r['cost_ex']:5.0f} {r['net_ex']:6.0f} "
               f"{r['buy_h']:5.1f} {r['sell_h']:5.1f} {r['ex_per_h']:6.0f} {r['gold_buy']:8.0f} {r['gold_sell']:8.0f} "
               f"{r['ex_per_kgold']:6.2f}{'*' if r['gold_est'] else ''}")

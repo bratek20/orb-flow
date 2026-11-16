@@ -18,6 +18,7 @@ import collections
 
 from .chains import DEFAULT_GOLD_PER_UNIT, FILL_SHARE, MONEY, gold_table, load, market_stats
 from .db import connect
+from .names import short
 
 HAIRCUT = 0.10  # per trading leg (item buy and item sell): we rarely get the average price
 
@@ -43,7 +44,7 @@ def print_round(res, div_ex):
     print(f"{'leg':32s} {'give':>12s} {'get':>12s} {'gold/unit':>9s} {'gold':>9s}")
     for l in res["legs"]:
         mark = " (guess)" if l["want"] in res["unknown_gold"] else ""
-        print(f"{l['give'] + ' -> ' + l['want']:32s} {l['give_qty']:12.2f} {l['want_qty']:12.2f} "
+        print(f"{short(l['give']) + ' -> ' + short(l['want']):32s} {l['give_qty']:12.2f} {l['want_qty']:12.2f} "
               f"{l['gpu']:9.0f} {l['gold']:9.0f}{mark}")
     if res["end"] == "divine":
         profit_div = res["end_qty"] - res["legs"][0]["give_qty"]
@@ -53,14 +54,15 @@ def print_round(res, div_ex):
             print(f"gold per div of profit: {res['gold'] / profit_div:.0f} | ex per 1k gold: "
                   f"{profit_div * div_ex / (res['gold'] / 1000):.1f}")
             for l in res["legs"]:
-                print(f"   {l['give']}->{l['want']}: {l['gold'] / profit_div:8.0f} gold per div profit")
+                print(f"   {short(l['give'])}->{short(l['want'])}: {l['gold'] / profit_div:8.0f} gold per div profit")
 
 
 def parse_leg(s):
     pair, r = s.split("@")
     give, want = pair.split(">")
     rate = 1 / float(r[1:]) if r.startswith("/") else float(r)
-    return give.strip(), want.strip(), rate
+    from .names import resolve
+    return resolve(give.strip()), resolve(want.strip()), rate
 
 
 def scan(con, league, rates_override, min_units_h=20, haircut=HAIRCUT):
@@ -93,7 +95,7 @@ def scan(con, league, rates_override, min_units_h=20, haircut=HAIRCUT):
                 item_units = [l for l in res["legs"] if l["want"] == item][0]["want_qty"]
                 hours = item_units / (FILL_SHARE * m[fund]["units_h"]) + item_units / (FILL_SHARE * m[sell]["units_h"])
                 rows.append({
-                    "route": " > ".join(["divine"] + [l[1] for l in legs]), "item": item,
+                    "route": " > ".join(short(x) for x in ["divine"] + [l[1] for l in legs]), "item": item,
                     "profit_ex": profit * div_ex, "gold": res["gold"],
                     "ex_per_kgold": profit * div_ex / (res["gold"] / 1000),
                     "gold_per_div": res["gold"] / profit, "hours_per_div_in": hours,
@@ -137,7 +139,7 @@ def main(argv=None):
         for r in rows[:a.top]:
             nj = nin.get(r["item"])
             if nj:
-                ref = r["sell_ex"] if nj[1] == r["sell_m"] else (r["buy_ex"] if nj[1] in r["route"].split(" > ")[:2] else r["sell_ex"])
+                ref = r["buy_ex"] if (nj[1] != r["sell_m"] and short(nj[1]) in r["route"].split(" > ")[:2]) else r["sell_ex"]
                 chk = "OK" if abs(nj[0] / ref - 1) < 0.35 else "DIFF"
                 nj_s = f"{nj[0]:7.1f}"
             else:

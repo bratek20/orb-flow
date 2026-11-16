@@ -52,6 +52,8 @@ def main(argv=None):
     con = connect()
     con.executescript(SCHEMA)
     if a.cmd == "add":
+        from .names import resolve
+        a.want, a.give = resolve(a.want), resolve(a.give)
         cur = con.execute("INSERT INTO trades (placed_at, want, want_qty, give, give_qty, gold, note) VALUES (?,?,?,?,?,?,?)",
                           (a.at or _now(), a.want, a.want_qty, a.give, a.give_qty, a.gold, a.note))
         print("trade id", cur.lastrowid)

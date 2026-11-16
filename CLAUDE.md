@@ -21,6 +21,10 @@ No scheduled tasks. Data is only downloaded while we work.
 - `python -m orbflow.trades add|fill|cancel|list|calib`: log of real orders (ground truth for fill times and gold)
 - `python -m orbflow.scan`: raw cross-pair gaps. `journal`: advice log and grading. `backtest`: v0 harness
 
+## Item names
+Use short names when talking to the player (rarity, echoes, necro-cat, gex, div, ex...). `python -m orbflow.names`
+prints the table (docs/NAMES.txt), and every CLI accepts short names.
+
 ## Player context
 - Started with a 100 ex budget (~50 chaos total). Gold: ~1.4M at start. The gold fee is per unit WANTED (see FINDINGS).
 - Wants to start small, verify each strategy in game, then scale up.

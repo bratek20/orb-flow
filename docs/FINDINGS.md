@@ -86,6 +86,7 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 | Gemcutter's Prism | 1000 | ~20-50 |
 | Divine | 800 | ~1.3 (cheapest way to sell) |
 | Omen of Abyssal Echoes | 1000 | ~45 at ~22 ex |
+| Omen of Chaotic Rarity | 450 | ~5.6 at ~81 ex |
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
@@ -132,3 +133,12 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   At 9 per div: 15.6k, about equal to regal. Gold-wise it is not an upgrade at this unit price.
 - Pattern: GCP and echoes are both 1000/unit. If catalysts/infusers are also ~1000, items worth 500-1300 ex
   would cost only ~1-2 gold per ex. That's the real gold-saver to test next.
+
+## 2026-11-16: Omen of Chaotic Rarity, done live
+- Bought 10 for 810 ex (81 ex each, 4.5k gold, **450 gold/unit**). Sold 10 for 58 chaos (5.8 chaos each, 9.3k gold).
+  About 810 ex -> 58 chaos (~3,400 ex): **~+2,600 ex**, 13.8k gold for the two trading legs.
+- If the 810 ex had to be bought with div (120 gold/ex = 97k), the full round is ~24k gold per div of profit,
+  worse than regal (15.5k), because only 4.5x per ex vs 18x for regal.
+- Rule: **spend exalts on the route with the highest multiplier per ex** (regal). Ex costs 120 gold whatever it's used for.
+  Spend chaos and div on the lower-multiplier routes.
+- Short names: `python -m orbflow.names` (full list in docs/NAMES.txt). All CLIs accept them.
