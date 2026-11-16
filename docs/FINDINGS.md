@@ -103,3 +103,19 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
   - Chaos-funded (gold-cheap funding: chaos costs 160 gold per ~52 ex): Omen of Abyssal Echoes chaos ~24 ex,
     div ~52 ex, 350-1300 units/h. Needs the per-unit omen gold fee.
 - New tool: `python -m orbflow.liquidity <item> --qty N` (units/h, queue, front/back fill hours).
+
+## 2026-11-16: full-round gold accounting (`orbflow.cycles`)
+Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put through the loop:
+| leg | gold | gold per div of profit |
+|---|---|---|
+| div -> 597 ex | 71.6k | 4.3k (27%) |
+| 597 ex -> 1463 regal | 175.5k | 10.4k (67%) |
+| 1463 regal -> 17.8 div | 14.3k | 0.85k (6%) |
+| **total** | **261k for +16.8 div** | **15.5k per div (38 ex per 1k gold)** |
+- The gold sink is wanting 120-gold regals that are worth 0.41 ex, not the exalts.
+- Funding with chaos instead of exalts: div -> ~9.5 chaos costs ~1.5k gold vs 71.6k for div -> 597 ex.
+- Chaos-funded rounds where poe.ninja confirms the div-side price: Refined Necrotic Catalyst (chaos ~620 -> div ~1200-1375),
+  Vaal Armourer's Infuser (~515 -> ~930-950), Omen of Abyssal Echoes (~25 -> ~54-56), Twilight Reliquary Key (~19 -> ~36-39).
+  Their gold per div of profit is 3-12k IF the item fee is ~300/unit (unknown). That's the next thing to measure.
+- Regal stays far ahead on profit per div of capital (+16.8 div per div in). Chaos rounds are about +0.2-1.3 div per div in.
+  With 34 div of capital and gold now the scarce input, the per-gold ranking matters most.

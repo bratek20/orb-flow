@@ -77,3 +77,24 @@ class Ninja:
 
     def overview(self, type_: str = "Currency"):
         return get_json(f"{NINJA}/economy/exchange/current/overview?league={q(self.league)}&type={type_}")
+
+
+NINJA_TYPES = ["Currency", "Fragments", "Essences", "Ritual", "Delirium", "Breach", "Abyss", "UncutGems",
+               "Expedition", "Runes", "SoulCores", "Idols", "LineageSupportGems", "Ultimatum"]
+
+
+def ninja_prices(league: str) -> dict:
+    """{api_id: (price_ex, main_market_currency, volume)} across poe.ninja exchange categories."""
+    out = {}
+    nj = Ninja(league)
+    for t in NINJA_TYPES:
+        try:
+            d = nj.overview(t)
+        except Exception:
+            continue
+        rate = d.get("core", {}).get("rates", {}).get("exalted")
+        if not rate:
+            continue
+        for l in d.get("lines", []):
+            out[l["id"]] = (l["primaryValue"] * rate, l.get("maxVolumeCurrency"), l.get("volumePrimaryValue"))
+    return out

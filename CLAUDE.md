@@ -40,3 +40,5 @@ No scheduled tasks. Data is only downloaded while we work.
 - Backlog: GGG cxapi OAuth email draft, calibrate FILL_SHARE from fills, `trades import` from data/trades.csv,
   use poe.ninja as a second price source inside chains (snapshot prices are noisy with only a few snapshots).
 - `python -m orbflow.liquidity <item> --qty N` answers "how long will it take to sell".
+- `python -m orbflow.cycles --legs ...` / `--scan`: full rounds div->...->div with gold on EVERY leg, plus a poe.ninja check.
+  Gold is now the player's main constraint: rank by ex per 1k gold. Collect per-unit gold fees for catalysts/omens/infusers.
