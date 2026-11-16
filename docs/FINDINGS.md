@@ -87,6 +87,7 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 | Divine | 800 | ~1.3 (cheapest way to sell) |
 | Omen of Abyssal Echoes | 1000 | ~45 at ~22 ex |
 | Omen of Chaotic Rarity | 450 | ~5.6 at ~81 ex |
+| Vaal Armourer's Infuser | 250 | ~0.7 at ~350 ex |
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
@@ -148,3 +149,7 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Round at 8/div: +2.32 div per div in, **13.2k gold per div of profit** (regal: 15.5k). Slightly better on gold,
   and it needs no exalts. At 11/div it falls to 21k, so the sell price decides it.
 - Scaling: buying 140 echoes for 50 chaos (140k gold). Div market trades ~1000 echoes/h with a ~10k seller queue.
+
+## 2026-11-16: armour-infuser
+- Best bid is ~6 chaos (~350 ex). The player bids 3 for 18 chaos, first in line. **Gold fee 250 per unit** (750 for 3).
+- Sells for div at ~1.5-1.6 div (ninja ~955 ex). Round: ~2.8k gold per div of profit, about 5x better than regal.
