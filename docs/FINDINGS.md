@@ -88,3 +88,18 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
+
+## 2026-11-16: scaling results and next strategies
+- Player cycled ex -> regal -> div for a few hours: **+30 div**, waits of ~30 min per leg.
+  Holdings now: 34 div, 1239 regal, 454 ex. ninja still shows regal at ~83/div (6.6 ex); div = ~546 ex.
+- Gold per div of regal profit: 82 regal x 120 + 800 = ~10.6k gold (+~4k if the ex has to be bought, since 33 ex x 120).
+- Regal liquidity (3 snapshots): div market 850-5000 regal/h, seller queue up to ~24k regal.
+  Ex market 150-1000 regal/h. The ex buy side is the bottleneck.
+- Journal: 9 of 20 cross_pair leads from 2026-11-15 still showed a >15% gap a day later (45%). Leads are noisy,
+  so always verify live.
+- Candidates for more throughput:
+  - Omen of Chaotic Rarity: ex pair ~39-78 ex, chaos pair ~320-440 ex, div ~300-325 ex (ninja 325; div vol 734).
+    Ex-side flow ~35-60/h. About 6x the profit-flow of regal, but the same ex-funding gold cost.
+  - Chaos-funded (gold-cheap funding: chaos costs 160 gold per ~52 ex): Omen of Abyssal Echoes chaos ~24 ex,
+    div ~52 ex, 350-1300 units/h. Needs the per-unit omen gold fee.
+- New tool: `python -m orbflow.liquidity <item> --qty N` (units/h, queue, front/back fill hours).

@@ -32,12 +32,11 @@ No scheduled tasks. Data is only downloaded while we work.
   Treat API numbers as leads and ask the player for live ratios before recommending real trades.
 - Python stdlib only; run modules as `python -m orbflow.<module>` from the repo root.
 
-## Where we left off (2026-11-15)
-- Confirmed edge: cheap items trade far below value vs Exalted and well above it vs Chaos/Divine.
-  Regal loop (ex bid ~2.45 regal/ex, then sell ~80-82 regal/div) and GCP (buy ~15-20 ex, sell 1:1 chaos) both worked live.
-- Open order: trade #8, 492 regal -> 6 div (4800 gold). Ask how it went and log the fill (`trades fill 8 --at ...`).
-- Fill times for trades #1/#2 were logged with guessed clock times.
-- Suggested next test: Omen of the Ancients (buy with ex ~4-4.5, sell for div ~112). Need its per-unit gold fee.
-- Backlog: GGG cxapi OAuth application (player is open to it; draft the email), calibrate FILL_SHARE
-  from the trades table, persistence check of chains across many snapshots, cut sell prices for div sales
-  to market (55-82 regal/div range seen).
+## Where we left off (2026-11-16)
+- Player made +30 div with the ex -> regal -> div loop. Now holds 34 div, 1239 regal, 454 ex. Current gold unknown (ask).
+- Proposed next: test Omen of Chaotic Rarity (buy with ex ~60, sell for chaos/div ~300-390) and chaos-funded
+  Omen of Abyssal Echoes (buy with chaos ~24 ex, sell for div ~52). Need per-unit gold fee for omens.
+- Trade #9 in the trades table is an aggregate summary row, not a single order.
+- Backlog: GGG cxapi OAuth email draft, calibrate FILL_SHARE from fills, `trades import` from data/trades.csv,
+  use poe.ninja as a second price source inside chains (snapshot prices are noisy with only a few snapshots).
+- `python -m orbflow.liquidity <item> --qty N` answers "how long will it take to sell".
