@@ -142,3 +142,9 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Rule: **spend exalts on the route with the highest multiplier per ex** (regal). Ex costs 120 gold whatever it's used for.
   Spend chaos and div on the lower-multiplier routes.
 - Short names: `python -m orbflow.names` (full list in docs/NAMES.txt). All CLIs accept them.
+
+## 2026-11-16: echoes scaling
+- Sold 16 echoes for 2 div (**8 per div ≈ 75 ex each**, above ninja's ~54). Bought at 2.8 per chaos (~21 ex).
+- Round at 8/div: +2.32 div per div in, **13.2k gold per div of profit** (regal: 15.5k). Slightly better on gold,
+  and it needs no exalts. At 11/div it falls to 21k, so the sell price decides it.
+- Scaling: buying 140 echoes for 50 chaos (140k gold). Div market trades ~1000 echoes/h with a ~10k seller queue.
