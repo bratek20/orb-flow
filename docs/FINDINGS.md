@@ -207,3 +207,9 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Monsters: listed 9 div : 63 (7/div). Cheaper sellers at 1:10 (50 in stock) are ahead in the book. GGG 11h: 204 monsters
   sold for div at avg 0.127 div (~7.9/div), range 6-15/div. So 7/div is above the average fill but inside the range; 8/div fills most hours.
 - Player says ex->regal->div "no longer so good" (no live numbers yet).
+- Echoes div price collapsed: 11h 1690 echoes sold for div at avg 0.06 (~16/div, low 0.017). Chaos side ~0.48. The chaos->echoes->div
+  gap is ~1.25x now, so the route is dead for the moment. Old #18 (140 echoes at 5/div) is far off the market.
+- Pattern: cheap items (sin-necromancy, chance, preserved-jawbone) show 5-30x ex->div gaps, but the div side has queues of
+  2-11k units. The gap is real in price but you sit at the back of the queue. Check queue/volume before calling it an edge.
+- uncut-skill-gem-19: div side steady at 0.333 (3/div) for 4 hours (27-87/h, queue ~760); ex side 4-70 ex (avg 12-23). Test candidate.
+- sin-exaltation: chaos ~0.45-0.9, div ~0.09-0.10 (10-11/div), 280-940/h on div. Monsters-like route, gold fee unknown.
