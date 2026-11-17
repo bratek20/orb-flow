@@ -39,14 +39,18 @@ def snapshot_prices(con, league, last_n):
     prices[item][money][sid] = price of 1 item in div, in that market, that hour
     units[item][money][sid]  = item units traded that hour
     rates[sid] = {money: ex per unit}"""
-    sids = [r[0] for r in con.execute(
-        "SELECT DISTINCT snapshot_id FROM pair_snapshots WHERE league=? ORDER BY snapshot_id DESC LIMIT ?",
-        (league, last_n))][::-1]
+    from .ggg import pair_rows
+    rows = pair_rows(con, league, last_n)          # GGG hourly digests (preferred: more hours, low/high)
+    if not rows:                                   # fallback: poe2scout snapshots
+        sids = [r[0] for r in con.execute(
+            "SELECT DISTINCT snapshot_id FROM pair_snapshots WHERE league=? ORDER BY snapshot_id DESC LIMIT ?",
+            (league, last_n))]
+        marks = ",".join("?" * len(sids))
+        rows = [dict(r) for r in con.execute(
+            f"SELECT * FROM pair_snapshots WHERE league=? AND snapshot_id IN ({marks})", (league, *sids))]
+    sids = sorted({r["snapshot_id"] for r in rows})
     if not sids:
-        return {}, {}, {}, []
-    marks = ",".join("?" * len(sids))
-    rows = con.execute(f"SELECT * FROM pair_snapshots WHERE league=? AND snapshot_id IN ({marks})",
-                       (league, *sids)).fetchall()
+        return {}, {}, {}, [], {}
     rates = collections.defaultdict(lambda: {"exalted": 1.0})
     for r in rows:
         for m in ("chaos", "divine"):
@@ -56,6 +60,7 @@ def snapshot_prices(con, league, last_n):
                 rates[r["snapshot_id"]][m] = ex_u / m_u
     prices = collections.defaultdict(lambda: collections.defaultdict(dict))
     units = collections.defaultdict(lambda: collections.defaultdict(dict))
+    rng = collections.defaultdict(lambda: collections.defaultdict(dict))   # (low, high) price in div
     for r in rows:
         sr = rates[r["snapshot_id"]]
         if "divine" not in sr:
@@ -65,11 +70,16 @@ def snapshot_prices(con, league, last_n):
             if money in MONEY and item not in MONEY and money in sr and iu and mu:
                 prices[item][money][r["snapshot_id"]] = mu * sr[money] / sr["divine"] / iu
                 units[item][money][r["snapshot_id"]] = iu
-    return prices, rates, units, sids
+                k1, k2 = ("one", "two") if item == r["one_api"] else ("two", "one")
+                lo_i, lo_m, hi_i, hi_m = (r.get(f"{k1}_low"), r.get(f"{k2}_low"), r.get(f"{k1}_high"), r.get(f"{k2}_high"))
+                if lo_i and lo_m and hi_i and hi_m:
+                    f = sr[money] / sr["divine"]
+                    rng[item][money][r["snapshot_id"]] = tuple(sorted((lo_m / lo_i * f, hi_m / hi_i * f)))
+    return prices, rates, units, sids, rng
 
 
 def find_rounds(con, league, last_n=12, min_gap=1.3, min_units_h=10, min_stable=0.6):
-    prices, rates, units, sids = snapshot_prices(con, league, last_n)
+    prices, rates, units, sids, rng = snapshot_prices(con, league, last_n)
     if not sids:
         return [], {}, sids
     gtbl = gold_table(con)
@@ -124,6 +134,11 @@ def find_rounds(con, league, last_n=12, min_gap=1.3, min_units_h=10, min_stable=
                     "buy_unit": buy / mdiv[fund], "sell_per": mdiv[sell] / sel,
                     "units_f": u_f, "units_s": u_s, "gold_known": item in gtbl, "proven": item in proven,
                     "hours_seen": len(common),
+                    # typical cheapest buy / dearest sell seen inside an hour (maker prices), in money units
+                    "buy_low": (st.median([rng[item][fund][x][0] for x in common if x in rng[item][fund]]) / mdiv[fund])
+                               if any(x in rng[item][fund] for x in common) else None,
+                    "sell_high": (st.median([rng[item][sell][x][1] for x in common if x in rng[item][sell]]) / mdiv[sell])
+                                 if any(x in rng[item][sell] for x in common) else None,
                 })
     out.sort(key=lambda r: r["gold_per_div"])
     return out, {"div_ex": div_ex, "chaos_per_div": 1 / mdiv["chaos"], "ex_per_div": 1 / mdiv["exalted"],
@@ -136,10 +151,16 @@ MONEY_SHORT = {"exalted": "ex", "chaos": "chaos", "divine": "div"}
 def render(rows, info, league, refresh_s):
     last = info.get("last", "-")
     def fmt_buy(r):
-        return f"{r['buy_unit']:.3g} {MONEY_SHORT[r['fund']]} each"
+        lo = f" · low {r['buy_low']:.3g}" if r.get("buy_low") else ""
+        return f"{r['buy_unit']:.3g} {MONEY_SHORT[r['fund']]} each<div class=sub>{r['buy_ex']:.1f} ex{lo}</div>"
     def fmt_sell(r):
         m = MONEY_SHORT[r["sell"]]
-        return f"{r['sell_per']:.3g} per {m}" if r["sell_per"] >= 1 else f"{1 / r['sell_per']:.3g} {m} each"
+        base = f"{r['sell_per']:.3g} per {m}" if r["sell_per"] >= 1 else f"{1 / r['sell_per']:.3g} {m} each"
+        hi = ""
+        if r.get("sell_high"):
+            per = 1 / r["sell_high"]  # items per 1 unit of the sell currency at the best price seen
+            hi = f" · best {per:.3g} per {m}" if per >= 1 else f" · best {1 / per:.3g} {m} each"
+        return f"{base}<div class=sub>{r['sell_ex']:.1f} ex{hi}</div>"
     trs = []
     for r in rows:
         tags = []
@@ -155,8 +176,8 @@ def render(rows, info, league, refresh_s):
             f"<td data-v={r['profit_div']:.3f}>+{r['profit_div']:.2f}</td>"
             f"<td data-v={r['stable']:.2f}>{r['stable']:.0%}</td>"
             f"<td data-v={r['gap_med']:.2f}>{r['gap_med']:.2f}x <span class=sub>min {r['gap_min']:.2f} · last {last_gap}</span></td>"
-            f"<td>{fmt_buy(r)}<div class=sub>{r['buy_ex']:.1f} ex</div></td>"
-            f"<td>{fmt_sell(r)}<div class=sub>{r['sell_ex']:.1f} ex</div></td>"
+            f"<td>{fmt_buy(r)}</td>"
+            f"<td>{fmt_sell(r)}</td>"
             f"<td data-v={min(r['units_f'], r['units_s']):.0f}>{r['units_f']:.0f} / {r['units_s']:.0f}</td>"
             f"<td data-v={r['hours']:.2f}>{r['hours']:.1f}</td></tr>")
     body = "\n".join(trs) or '<tr><td colspan=10>No stable routes in the data. Collect more snapshots.</td></tr>'
@@ -201,11 +222,15 @@ rows.forEach(r=>tb.appendChild(r))}});
 </script></body></html>"""
 
 
-def build(league, collect=False, last_n=12, min_gap=1.3, refresh_s=600):
+def build(league, collect=False, last_n=24, min_gap=1.3, refresh_s=600):
     if collect:
         from .client import Scout
         from .collect import collect_pairs
-        collect_pairs(Scout(league), connect())
+        from .ggg import build_map, sync
+        con = connect()
+        collect_pairs(Scout(league), con)      # poe2scout snapshot: keeps the name mapping learning
+        if sync(con, hours=max(last_n, 3), league=league, verbose=False):
+            build_map(con, verbose=False)
     rows, info, _ = find_rounds(connect(), league, last_n=last_n, min_gap=min_gap)
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(render(rows, info, league, refresh_s), encoding="utf-8")
@@ -230,7 +255,7 @@ def main(argv=None):
     ap.add_argument("--serve", action="store_true", help="collect + rebuild every --every minutes and serve the page")
     ap.add_argument("--every", type=int, default=60, help="minutes between refreshes in --serve mode")
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--hours", type=int, default=12, help="how many recent hourly snapshots to use")
+    ap.add_argument("--hours", type=int, default=24, help="how many recent hourly snapshots to use")
     ap.add_argument("--min-gap", type=float, default=1.3)
     a = ap.parse_args(argv)
     if not a.serve:

@@ -4,10 +4,11 @@ PoE2 Currency Exchange analysis tool. Claude is the "analyst" in the loop for no
 the toolbox. Read `docs/PLAN.md` (roadmap) and `docs/FINDINGS.md` (what we learned so far) first.
 
 ## Before answering any market question
-1. Check how fresh the data is:
-   `python -c "import sqlite3;print(sqlite3.connect('data/orbflow.db').execute('select max(fetched_at) from pair_snapshots').fetchone())"`
-2. If the latest snapshot is older than ~1 hour, refresh: `python -m orbflow.collect`
-   (one call, ~1.5 MB). Each refresh also grows our own per-pair history, which poe2scout does not keep.
+1. Refresh: `python -m orbflow.ggg` (fetches only the missing GGG hours, ~1.4 MB each; newest hour is ~1-1.5 h late)
+   and `python -m orbflow.collect` (one poe2scout snapshot; needed so new items get mapped to names).
+2. GGG's public feed (web.poecdn.com/api/currency-exchange/poe2/<unix hour>) is THE source: no login, full history,
+   lowest/highest ratio per pair per hour. `python -m orbflow.ggg --show <item>` shows hourly avg/low/high per money market.
+   No OAuth application is needed (decided 2026-11-17).
 3. If price history is older than ~1 day, also run `python -m orbflow.collect --backfill-hours 48`.
 4. Run `python -m orbflow.journal grade` so old advice gets scored before giving new advice.
 5. After analysis, journal new advice (`python -m orbflow.journal advise`) and add notable
@@ -46,7 +47,7 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 - Proposed next: test Omen of Chaotic Rarity (buy with ex ~60, sell for chaos/div ~300-390) and chaos-funded
   Omen of Abyssal Echoes (buy with chaos ~24 ex, sell for div ~52). Need per-unit gold fee for omens.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.
-- Backlog: GGG cxapi OAuth email draft, calibrate FILL_SHARE from fills, `trades import` from data/trades.csv,
+- Backlog: calibrate FILL_SHARE from fills, `trades import` from data/trades.csv,
   use poe.ninja as a second price source inside chains (snapshot prices are noisy with only a few snapshots).
 - `python -m orbflow.liquidity <item> --qty N` answers "how long will it take to sell".
 - `python -m orbflow.cycles --legs ...` / `--scan`: full rounds div->...->div with gold on EVERY leg, plus a poe.ninja check.

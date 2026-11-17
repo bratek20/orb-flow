@@ -184,3 +184,13 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Rejected after the per-snapshot check: chayulas-cat, uncut-skill-gem-19, sin-necromancy. Their ratios jump 3-10x between hours (thin, noisy).
 - Monsters test: bought 10 at 1.67/chaos (450 gold each), first 7 sold at **7 per div**. The round works: ~2x per round,
   ~7.4k gold per div of profit. Scaling with a 30-unit bid.
+
+## 2026-11-17: GGG public exchange feed (no OAuth needed)
+- `https://web.poecdn.com/api/currency-exchange/poe2/<unix hour>` is open: every pair of every league per hour with
+  volume_traded, lowest/highest_ratio, lowest/highest_stock. Unpublished hours return 404; the newest is ~1-1.5 h late.
+- poe2scout snapshots ARE these hours (div/ex volumes 214/109,721 match exactly). Mapping metadata path -> api id is
+  learned by volume matching (`orbflow.ggg --map`): 338 ids mapped from 4 matched snapshots.
+- Low/high confirm the player's fills: monsters chaos low 0.5 / high 0.6-1.0 chaos (bought at 0.6), div low 0.067 /
+  high 0.167 div (sold at 0.143 = 7/div). Monsters also trade at ~19-22 ex in the ex market (cheaper than via chaos).
+- Lead: sin-necromancy buys at 1-2.5 ex, sells 0.05-0.08 div (25-40 ex) in the div market, but only 20-50/h there.
+  Gold fee unknown (omens are 450 or 1000).
