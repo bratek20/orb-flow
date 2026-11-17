@@ -194,3 +194,8 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   high 0.167 div (sold at 0.143 = 7/div). Monsters also trade at ~19-22 ex in the ex market (cheaper than via chaos).
 - Lead: sin-necromancy buys at 1-2.5 ex, sells 0.05-0.08 div (25-40 ex) in the div market, but only 20-50/h there.
   Gold fee unknown (omens are 450 or 1000).
+- Gold formula check (21 logged orders, 0 exceptions): gold = units WANTED x fee(wanted item). The fee is a fixed
+  per-item constant, independent of what you give, order size and market price. It does NOT follow value
+  (infuser ~800 ex -> 250; gcp ~30 ex -> 1000), and no public formula exists. So fees must be learned per item
+  (the game shows the fee before you place the order). Useful view: gold per ex of value received:
+  ex 120, gcp ~33, echoes ~11-40, monsters ~6-16, chaos ~3.4, div ~1.6, infuser ~0.3.
