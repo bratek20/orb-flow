@@ -125,6 +125,7 @@ def find_rounds(con, league, last_n=12, min_gap=1.3, min_units_h=10, min_stable=
                 if profit <= 0:
                     continue
                 gold = sum(n * gtbl.get(w, DEFAULT_GOLD_PER_UNIT) for _, w, n in legs)
+                gold_first = legs[0][2] * gtbl.get(fund, DEFAULT_GOLD_PER_UNIT) if fund != "divine" else 0.0
                 hours = n_items / (FILL_SHARE * u_f) + n_items / (FILL_SHARE * u_s)
                 out.append({
                     "item": item, "fund": fund, "sell": sell, "profit_div": profit, "gold": gold,
@@ -133,7 +134,10 @@ def find_rounds(con, league, last_n=12, min_gap=1.3, min_units_h=10, min_stable=
                     "buy_ex": buy * div_ex, "sell_ex": sel * div_ex,
                     "buy_unit": buy / mdiv[fund], "sell_per": mdiv[sell] / sel,
                     "units_f": u_f, "units_s": u_s, "gold_known": item in gtbl, "proven": item in proven,
-                    "hours_seen": len(common),
+                    "hours_seen": len(common), "n_items": n_items, "gold_first": gold_first,
+                    "hist": {k: [(round(m[x], 6) if x in m else None) for x in sids] for k, m in (("buy", mk[fund]), ("sell", mk[sell]))}
+                            | {k: [(round(rng[item][mm][x][i], 6) if x in rng[item][mm] else None) for x in sids]
+                               for k, mm, i in (("buy_lo", fund, 0), ("buy_hi", fund, 1), ("sell_lo", sell, 0), ("sell_hi", sell, 1))},
                     # typical cheapest buy / dearest sell seen inside an hour (maker prices), in money units
                     "buy_low": (st.median([rng[item][fund][x][0] for x in common if x in rng[item][fund]]) / mdiv[fund])
                                if any(x in rng[item][fund] for x in common) else None,
@@ -141,87 +145,33 @@ def find_rounds(con, league, last_n=12, min_gap=1.3, min_units_h=10, min_stable=
                                  if any(x in rng[item][sell] for x in common) else None,
                 })
     out.sort(key=lambda r: r["gold_per_div"])
-    return out, {"div_ex": div_ex, "chaos_per_div": 1 / mdiv["chaos"], "ex_per_div": 1 / mdiv["exalted"],
+    return out, {"hours": sids, "min_gap": min_gap, "fill_share": FILL_SHARE, "div_ex": div_ex, "chaos_per_div": 1 / mdiv["chaos"], "ex_per_div": 1 / mdiv["exalted"],
                  "snaps": len(sids), "last": sids[-1]}, sids
 
 
 MONEY_SHORT = {"exalted": "ex", "chaos": "chaos", "divine": "div"}
 
 
+TEMPLATE = Path(__file__).resolve().parent / "board_template.html"
+
+
 def render(rows, info, league, refresh_s):
+    import json
     last = info.get("last", "-")
     if isinstance(last, int) and last > 1_000_000_000:   # GGG hour = unix time
         last = dt.datetime.fromtimestamp(last, dt.timezone.utc).strftime("%Y-%m-%d %H:00 UTC")
-    def fmt_buy(r):
-        lo = f" · low {r['buy_low']:.3g}" if r.get("buy_low") else ""
-        return f"{r['buy_unit']:.3g} {MONEY_SHORT[r['fund']]} each<div class=sub>{r['buy_ex']:.1f} ex{lo}</div>"
-    def fmt_sell(r):
-        m = MONEY_SHORT[r["sell"]]
-        base = f"{r['sell_per']:.3g} per {m}" if r["sell_per"] >= 1 else f"{1 / r['sell_per']:.3g} {m} each"
-        hi = ""
-        if r.get("sell_high"):
-            per = 1 / r["sell_high"]  # items per 1 unit of the sell currency at the best price seen
-            hi = f" · best {per:.3g} per {m}" if per >= 1 else f" · best {1 / per:.3g} {m} each"
-        return f"{base}<div class=sub>{r['sell_ex']:.1f} ex{hi}</div>"
-    trs = []
-    for r in rows:
-        tags = []
-        if r["proven"]:
-            tags.append('<span class="tag ok">proven</span>')
-        if not r["gold_known"]:
-            tags.append(f'<span class="tag warn">gold?</span>')
-        last_gap = f"{r['gap_last']:.2f}x" if r["gap_last"] else "—"
-        trs.append(
-            f"<tr><td><b>{html.escape(short(r['item']))}</b> {''.join(tags)}<div class=sub>{html.escape(r['item'])}</div></td>"
-            f"<td>{MONEY_SHORT[r['fund']]} → {MONEY_SHORT[r['sell']]}</td>"
-            f"<td data-v={r['gold_per_div']:.0f}>{r['gold_per_div'] / 1000:.1f}k</td>"
-            f"<td data-v={r['profit_div']:.3f}>+{r['profit_div']:.2f}</td>"
-            f"<td data-v={r['stable']:.2f}>{r['stable']:.0%}</td>"
-            f"<td data-v={r['gap_med']:.2f}>{r['gap_med']:.2f}x <span class=sub>min {r['gap_min']:.2f} · last {last_gap}</span></td>"
-            f"<td>{fmt_buy(r)}</td>"
-            f"<td>{fmt_sell(r)}</td>"
-            f"<td data-v={min(r['units_f'], r['units_s']):.0f}>{r['units_f']:.0f} / {r['units_s']:.0f}</td>"
-            f"<td data-v={r['hours']:.2f}>{r['hours']:.1f}</td></tr>")
-    body = "\n".join(trs) or '<tr><td colspan=10>No stable routes in the data. Collect more snapshots.</td></tr>'
     now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    return f"""<!doctype html><html><head><meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=refresh content="{refresh_s}">
-<title>OrbFlow Board</title>
-<style>
-:root{{--bg:#fafaf7;--fg:#1d1d1b;--mut:#6b6b66;--line:#e3e2dc;--ok:#1f7a4d;--warn:#a15c00;--head:#f0efe9}}
-@media (prefers-color-scheme:dark){{:root{{--bg:#151514;--fg:#ecebe6;--mut:#9a9992;--line:#2c2c2a;--ok:#5cc28f;--warn:#e0a34a;--head:#1e1e1c}}}}
-body{{background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;margin:0;padding:16px}}
-h1{{font-size:20px;margin:0 0 4px}} .meta{{color:var(--mut);margin-bottom:12px}}
-.wrap{{overflow-x:auto}} table{{border-collapse:collapse;width:100%;min-width:860px}}
-th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}}
-th{{background:var(--head);position:sticky;top:0;cursor:pointer;white-space:nowrap}}
-td[data-v]{{font-variant-numeric:tabular-nums}} .sub{{color:var(--mut);font-size:12px}}
-.tag{{font-size:11px;padding:1px 5px;border-radius:4px;border:1px solid}} .ok{{color:var(--ok)}} .warn{{color:var(--warn)}}
-details{{margin-top:16px;color:var(--mut)}}
-</style></head><body>
-<h1>OrbFlow Board · {html.escape(league)}</h1>
-<div class=meta>Built {now} · data hour {html.escape(str(last))} · {info.get('snaps', 0)} hours of data ·
-1 div = {info.get('div_ex', 0):.0f} ex = {info.get('chaos_per_div', 0):.1f} chaos · page refreshes every {refresh_s // 60} min</div>
-<div class=wrap><table id=t><thead><tr>
-<th>item</th><th>buy → sell</th><th>gold / div profit</th><th>div profit / div in</th><th>stable</th>
-<th>gap (median)</th><th>buy at</th><th>sell at</th><th>units/h buy/sell</th><th>hours / div in</th>
-</tr></thead><tbody>
-{body}
-</tbody></table></div>
-<details><summary>How to read this</summary>
-<p>Each row is a full round: 1 div → (chaos/ex) → item → (chaos/ex) → div, with gold paid on every leg
-(gold = units you WANT × that item's fee). Sorted by gold per div of profit (lower is better). <b>stable</b> = share of
-hours where the sell price was at least the min gap above the buy price; one lucky hour does not count.
-Prices are what traded last hours, not the live book. Check the live ratio in game before you place an order.
-<b>gold?</b> = this item's fee is unknown, guessed at {DEFAULT_GOLD_PER_UNIT}/unit. <b>proven</b> = you have traded it.</p></details>
-<script>
-document.querySelectorAll('th').forEach((th,i)=>th.onclick=()=>{{const tb=document.querySelector('#t tbody');
-const rows=[...tb.rows];const asc=th.dataset.asc!=='1';th.dataset.asc=asc?'1':'0';
-rows.sort((a,b)=>{{const x=a.cells[i],y=b.cells[i];const vx=x.dataset.v,vy=y.dataset.v;
-const c=(vx!==undefined&&vy!==undefined)?(+vx)-(+vy):x.innerText.localeCompare(y.innerText);return asc?c:-c}});
-rows.forEach(r=>tb.appendChild(r))}});
-</script></body></html>"""
+    meta = (f"Built {now} · data hour {html.escape(str(last))} · {info.get('snaps', 0)} hours of data · "
+            f"1 div = {info.get('div_ex', 0):.0f} ex = {info.get('chaos_per_div', 0):.1f} chaos · page refreshes every {refresh_s // 60} min")
+    keys = ["item", "fund", "sell", "profit_div", "gold", "gold_per_div", "hours", "stable", "gap_med", "gap_min", "gap_last",
+            "buy_ex", "sell_ex", "buy_unit", "sell_per", "units_f", "units_s", "gold_known", "proven", "n_items", "gold_first",
+            "buy_low", "sell_high", "hist"]
+    data = {"rows": [{**{k: r.get(k) for k in keys}, "short": short(r["item"])} for r in rows],
+            "info": {k: info.get(k) for k in ("hours", "min_gap", "fill_share", "div_ex", "chaos_per_div", "ex_per_div")}}
+    js = json.dumps(data, separators=(",", ":"), default=float).replace("</", "<\\/")
+    return (TEMPLATE.read_text(encoding="utf-8")
+            .replace("%%REFRESH%%", str(refresh_s)).replace("%%LEAGUE%%", html.escape(league))
+            .replace("%%META%%", meta).replace("%%DEFAULT_GOLD%%", str(DEFAULT_GOLD_PER_UNIT)).replace("%%DATA%%", js))
 
 
 def build(league, collect=False, last_n=24, min_gap=1.3, refresh_s=600):

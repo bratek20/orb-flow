@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="%%REFRESH%%">
+<title>OrbFlow Board</title>
+<style>
+:root{--bg:#fafaf7;--surface:#ffffff;--fg:#1d1d1b;--mut:#6b6b66;--line:#e3e2dc;--head:#f0efe9;--accent:#2a78d6;
+  --ok:#1f7a4d;--warn:#a15c00;--s1:#2a78d6;--s2:#eb6834;--grid:#ecebe5;--bar:#2a78d6;--barlow:#c9c8c0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--surface:#1a1a19;--fg:#ecebe6;--mut:#9a9992;
+  --line:#2c2c2a;--head:#1e1e1c;--accent:#3987e5;--ok:#5cc28f;--warn:#e0a34a;--s1:#3987e5;--s2:#d95926;--grid:#262624;--bar:#3987e5;--barlow:#4a4a46}}
+:root[data-theme="dark"]{--bg:#151514;--surface:#1a1a19;--fg:#ecebe6;--mut:#9a9992;--line:#2c2c2a;--head:#1e1e1c;--accent:#3987e5;
+  --ok:#5cc28f;--warn:#e0a34a;--s1:#3987e5;--s2:#d95926;--grid:#262624;--bar:#3987e5;--barlow:#4a4a46}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;margin:0;padding:16px;max-width:1280px;margin:0 auto}
+h1{font-size:20px;margin:0 0 4px} h2{font-size:16px;margin:0 0 8px}
+.meta,.sub{color:var(--mut)} .meta{margin-bottom:14px} .sub{font-size:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
+.inputs{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+.inputs label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+.inputs input[type=number]{width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+.inputs .chk{flex-direction:row;align-items:center;gap:6px;font-size:13px;color:var(--fg)}
+.plan{margin-top:12px} .plan ol{margin:6px 0 0;padding-left:22px} .plan li{margin-bottom:8px}
+.sum{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
+.sum div b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.sortnote{margin:0 0 8px;color:var(--mut)} .sortnote b{color:var(--fg)}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--head);position:sticky;top:0;white-space:nowrap;font-weight:600;user-select:none}
+th[data-key]{cursor:pointer} th[data-key]:hover{color:var(--accent)}
+th.active{color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--head))}
+th .arr{display:inline-block;width:1em;margin-left:3px;opacity:.35} th.active .arr{opacity:1}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap} td.sorted{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.tag{font-size:11px;padding:1px 5px;border-radius:4px;border:1px solid;margin-left:4px;white-space:nowrap}
+.ok{color:var(--ok)} .warn{color:var(--warn)}
+button.tg{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:12px;margin-right:6px;vertical-align:middle}
+button.tg[aria-expanded=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+tr.detail td{background:var(--bg);padding:12px}
+.charts{display:grid;grid-template-columns:2fr 1fr;gap:16px} @media (max-width:760px){.charts{grid-template-columns:1fr}}
+.chart{position:relative} .chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart .t{font-weight:600;font-size:13px;margin-bottom:2px} .legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:4px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px;
+  font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.12);white-space:nowrap;display:none;z-index:2}
+.tip b{font-variant-numeric:tabular-nums}
+svg text{fill:var(--mut);font-size:11px} svg .lab{fill:var(--fg);font-size:11px;font-weight:600}
+details{margin-top:16px;color:var(--mut)}
+</style></head><body>
+<h1>OrbFlow Board · %%LEAGUE%%</h1>
+<div class="meta">%%META%%</div>
+
+<section class="card" id="planner">
+  <h2>What should I trade now?</h2>
+  <div class="inputs">
+    <label>div<input type="number" id="in_div" min="0" step="1" value="0"></label>
+    <label>chaos<input type="number" id="in_chaos" min="0" step="1" value="0"></label>
+    <label>ex<input type="number" id="in_ex" min="0" step="1" value="0"></label>
+    <label>gold<input type="number" id="in_gold" min="0" step="10000" value="0"></label>
+    <label>hours I can wait<input type="number" id="in_hours" min="0.5" step="0.5" value="3"></label>
+    <label>max gold / div profit<input type="number" id="in_maxg" min="1000" step="1000" value="20000"></label>
+    <label>keep gold reserve %<input type="number" id="in_reserve" min="0" max="90" step="5" value="20"></label>
+    <label class="chk"><input type="checkbox" id="in_unknown"> include routes with unknown gold fee</label>
+  </div>
+  <div class="plan" id="plan"></div>
+</section>
+
+<p class="sortnote" id="sortnote"></p>
+<div class="wrap"><table id="t"><thead><tr>
+  <th>item</th>
+  <th data-key="route">buy → sell<span class="arr"></span></th>
+  <th data-key="gold_per_div" title="gold spent per 1 div of profit (lower is better)">gold / div profit<span class="arr"></span></th>
+  <th data-key="profit_div" title="div of profit per 1 div put through one round">profit / div in<span class="arr"></span></th>
+  <th data-key="stable" title="share of hours where the gap was there">stable<span class="arr"></span></th>
+  <th data-key="gap_med">gap<span class="arr"></span></th>
+  <th>buy at</th><th>sell at</th>
+  <th data-key="units_min" title="items traded per hour in the buy / sell market">units/h<span class="arr"></span></th>
+  <th data-key="hours" title="hours to fill one round of 1 div">hours<span class="arr"></span></th>
+</tr></thead><tbody></tbody></table></div>
+
+<details><summary>How to read this</summary>
+<p>Each row is a full round: 1 div → (chaos/ex) → item → (chaos/ex) → div, with gold paid on every leg
+(gold = units you WANT × that item's fee). <b>stable</b> = share of hours where the sell price was at least the min gap above
+the buy price; one lucky hour does not count. Prices are trades from past hours, not the live book. Check the live ratio in game
+before you place an order. <b>gold?</b> = fee unknown, guessed at %%DEFAULT_GOLD%%/unit. <b>proven</b> = you have traded it.
+The ▸ button shows the hourly history. The planner splits your stash greedily: cheapest gold per div of profit first, at most
+what each market trades in the hours you can wait, one route per item. It is a heuristic; check the live book in game.</p></details>
+
+<script>
+const D = %%DATA%%;
+const R = D.rows, INFO = D.info, H = INFO.hours;
+const MS = {exalted:"ex", chaos:"chaos", divine:"div"};
+const perDiv = {divine:1, chaos:INFO.chaos_per_div, exalted:INFO.ex_per_div};
+R.forEach((r,i)=>{r.i=i; r.route=MS[r.fund]+"→"+MS[r.sell]; r.units_min=Math.min(r.units_f,r.units_s);});
+const fmt=(v,d=3)=>v==null||!isFinite(v)?"–":(+v).toPrecision(d).replace(/\.?0+(e|$)/,"$1");
+const fmtInt=v=>Math.round(v).toLocaleString("en");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LABEL={route:"buy → sell",gold_per_div:"gold / div profit",profit_div:"profit / div in",stable:"stable",gap_med:"gap",units_min:"units/h",hours:"hours"};
+const DEFDIR={gold_per_div:1,hours:1,route:1};  // 1 = ascending first
+let sortKey="gold_per_div", sortAsc=true; const open=new Set();
+function buyTxt(r){return `${fmt(r.buy_unit)} ${MS[r.fund]} each`+`<div class=sub>${fmt(r.buy_ex,4)} ex${r.buy_low?` · low ${fmt(r.buy_low)}`:""}</div>`}
+function sellPer(v,m){return v>=1?`${fmt(v)} per ${m}`:`${fmt(1/v)} ${m} each`}
+function sellTxt(r){const m=MS[r.sell];return sellPer(r.sell_per,m)+`<div class=sub>${fmt(r.sell_ex,4)} ex${r.sell_high?` · best ${sellPer(1/r.sell_high,m)}`:""}</div>`}
+function renderTable(){
+  const rows=[...R].sort((a,b)=>{const x=a[sortKey],y=b[sortKey];const c=typeof x==="string"?x.localeCompare(y):x-y;return sortAsc?c:-c});
+  document.querySelectorAll("th[data-key]").forEach(th=>{const on=th.dataset.key===sortKey;th.classList.toggle("active",on);
+    th.setAttribute("aria-sort",on?(sortAsc?"ascending":"descending"):"none");th.querySelector(".arr").textContent=on?(sortAsc?"▲":"▼"):"↕"});
+  document.getElementById("sortnote").innerHTML=`Sorted by <b>${LABEL[sortKey]}</b>, ${sortAsc?"lowest":"highest"} first · tap a column header to change`;
+  const sc=k=>k===sortKey?" sorted":"";
+  const html=rows.map(r=>{const ex=open.has(r.i);
+    const tags=(r.proven?'<span class="tag ok">proven</span>':"")+(r.gold_known?"":'<span class="tag warn">gold?</span>');
+    let h=`<tr><td><button class="tg" data-i="${r.i}" aria-expanded="${ex}" aria-label="show history of ${esc(r.short)}">${ex?"▾":"▸"}</button><b>${esc(r.short)}</b>${tags}<div class=sub>${esc(r.item)}</div></td>
+      <td class="${sc("route")}">${r.route}</td>
+      <td class="num${sc("gold_per_div")}">${(r.gold_per_div/1000).toFixed(1)}k</td>
+      <td class="num${sc("profit_div")}">+${r.profit_div.toFixed(2)}</td>
+      <td class="num${sc("stable")}">${Math.round(r.stable*100)}%</td>
+      <td class="num${sc("gap_med")}">${r.gap_med.toFixed(2)}× <span class=sub>min ${r.gap_min.toFixed(2)}${r.gap_last?` · last ${r.gap_last.toFixed(2)}`:""}</span></td>
+      <td>${buyTxt(r)}</td><td>${sellTxt(r)}</td>
+      <td class="num${sc("units_min")}">${fmtInt(r.units_f)} / ${fmtInt(r.units_s)}</td>
+      <td class="num${sc("hours")}">${r.hours.toFixed(1)}</td></tr>`;
+    if(ex)h+=`<tr class="detail"><td colspan="10"><div class="charts"><div class="chart" id="pc${r.i}"></div><div class="chart" id="gc${r.i}"></div></div></td></tr>`;
+    return h}).join("");
+  document.querySelector("#t tbody").innerHTML=html||'<tr><td colspan=10>No stable routes in the data.</td></tr>';
+  rows.filter(r=>open.has(r.i)).forEach(r=>{priceChart(r);gapChart(r)});
+}
+document.querySelectorAll("th[data-key]").forEach(th=>th.addEventListener("click",()=>{const k=th.dataset.key;
+  if(k===sortKey)sortAsc=!sortAsc;else{sortKey=k;sortAsc=!!DEFDIR[k]}renderTable()}));
+document.querySelector("#t tbody").addEventListener("click",e=>{const b=e.target.closest("button.tg");if(!b)return;
+  const i=+b.dataset.i;open.has(i)?open.delete(i):open.add(i);renderTable()});
+
+/* ---------- charts ---------- */
+const hourLbl=ts=>{const d=new Date(ts*1000);return d.getHours().toString().padStart(2,"0")+":00"};
+const dayLbl=ts=>{const d=new Date(ts*1000);return d.toLocaleDateString(undefined,{weekday:"short"})+" "+hourLbl(ts)};
+function niceTicks(lo,hi,n=4){const span=hi-lo||Math.abs(hi)||1;const step0=span/n;const mag=10**Math.floor(Math.log10(step0));
+  const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0);const a=Math.floor(lo/step)*step,b=Math.ceil(hi/step)*step;const t=[];
+  for(let v=a;v<=b+step/2;v+=step)t.push(+v.toPrecision(10));return t}
+function pathOf(vals,x,y){let d="",pen=false;vals.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?"L":"M")+x(i).toFixed(1)+","+y(v).toFixed(1);pen=true});return d}
+function bandOf(lo,hi,x,y){const segs=[];let cur=[];lo.forEach((v,i)=>{if(v==null||hi[i]==null){if(cur.length)segs.push(cur);cur=[];return}cur.push(i)});if(cur.length)segs.push(cur);
+  return segs.map(s=>"M"+s.map(i=>x(i).toFixed(1)+","+y(hi[i]).toFixed(1)).join("L")+"L"+s.slice().reverse().map(i=>x(i).toFixed(1)+","+y(lo[i]).toFixed(1)).join("L")+"Z").join("")}
+function frame(W,Hh,m,yt,y,x){let g="";yt.forEach(v=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`+
+  `<text x="${m.l-6}" y="${y(v)+3.5}" text-anchor="end">${fmt(v)}</text>`});
+  H.forEach((ts,i)=>{if(i%6===0||i===H.length-1)g+=`<text x="${x(i)}" y="${Hh-m.b+16}" text-anchor="middle">${hourLbl(ts)}</text>`});return g}
+function hover(el,svg,W,m,x,n,tipHtml,cross){
+  const tip=document.createElement("div");tip.className="tip";el.appendChild(tip);
+  const ov=svg.querySelector(".ov"),ln=svg.querySelector(".cross");
+  const move=ev=>{const r=svg.getBoundingClientRect();const px=(ev.clientX-r.left)*W/r.width;
+    let i=Math.round((px-m.l)/((W-m.l-m.r)/Math.max(n-1,1)));i=Math.max(0,Math.min(n-1,i));
+    ln.setAttribute("x1",x(i));ln.setAttribute("x2",x(i));ln.style.display="";cross&&cross(i);
+    tip.innerHTML=tipHtml(i);tip.style.display="block";const er=el.getBoundingClientRect();
+    let left=ev.clientX-er.left+14;if(left+tip.offsetWidth>er.width)left=ev.clientX-er.left-tip.offsetWidth-14;
+    tip.style.left=Math.max(0,left)+"px";tip.style.top=(ev.clientY-er.top-10)+"px"};
+  ov.addEventListener("pointermove",move);ov.addEventListener("pointerdown",move);
+  ov.addEventListener("pointerleave",()=>{tip.style.display="none";ln.style.display="none";cross&&cross(-1)})}
+function priceChart(r){
+  const el=document.getElementById("pc"+r.i);const h=r.hist,W=640,Hh=210,m={l:56,r:96,t:10,b:24},n=H.length;
+  const all=[...h.buy,...h.sell,...h.buy_lo,...h.buy_hi,...h.sell_lo,...h.sell_hi].filter(v=>v!=null);
+  if(!all.length){el.innerHTML="<div class=sub>no history</div>";return}
+  const yt=niceTicks(0,Math.max(...all));const y0=yt[0],y1=yt[yt.length-1];
+  const x=i=>m.l+i*(W-m.l-m.r)/Math.max(n-1,1),y=v=>m.t+(1-(v-y0)/(y1-y0||1))*(Hh-m.t-m.b);
+  const lastIdx=a=>{for(let i=a.length-1;i>=0;i--)if(a[i]!=null)return i;return -1};
+  const lb=lastIdx(h.buy),ls=lastIdx(h.sell);
+  let ly1=lb>=0?y(h.buy[lb]):0,ly2=ls>=0?y(h.sell[ls]):0;if(Math.abs(ly1-ly2)<13){const mid=(ly1+ly2)/2;if(ly1<ly2){ly1=mid-7;ly2=mid+7}else{ly1=mid+7;ly2=mid-7}}
+  const fM=MS[r.fund],sM=MS[r.sell];
+  el.innerHTML=`<div class="t">Price per ${esc(r.short)}, in div</div>
+   <div class="legend"><span><i style="background:var(--s1)"></i>buy market (${fM})</span><span><i style="background:var(--s2)"></i>sell market (${sM})</span><span class=sub>line = average, shade = cheapest–dearest trade that hour</span></div>
+   <svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="hourly price of ${esc(r.short)} in the ${fM} and ${sM} markets">
+   ${frame(W,Hh,m,yt,y,x)}
+   <path d="${bandOf(h.buy_lo,h.buy_hi,x,y)}" fill="var(--s1)" opacity=".14"/>
+   <path d="${bandOf(h.sell_lo,h.sell_hi,x,y)}" fill="var(--s2)" opacity=".14"/>
+   <path d="${pathOf(h.buy,x,y)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+   <path d="${pathOf(h.sell,x,y)}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+   ${lb>=0?`<text class="lab" x="${x(lb)+8}" y="${ly1+4}">buy (${fM})</text>`:""}
+   ${ls>=0?`<text class="lab" x="${x(ls)+8}" y="${ly2+4}">sell (${sM})</text>`:""}
+   <circle class="d1" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2" style="display:none"/>
+   <circle class="d2" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" style="display:none"/>
+   <line class="cross" y1="${m.t}" y2="${Hh-m.b}" stroke="var(--mut)" stroke-dasharray="3 3" style="display:none"/>
+   <rect class="ov" x="${m.l}" y="0" width="${W-m.l-m.r}" height="${Hh}" fill="transparent"/></svg>`;
+  const svg=el.querySelector("svg"),d1=svg.querySelector(".d1"),d2=svg.querySelector(".d2");
+  const inM=(v,mk)=>v==null?"–":`${fmt(v/(1/perDiv[mk]))} ${MS[mk]}`;
+  const line=(nm,mk,a,lo,hi,i)=>`${nm} (${MS[mk]} market): <b>${inM(a[i],mk)}</b>${lo[i]!=null?` <span class=sub>(${fmt(lo[i]*perDiv[mk])}–${fmt(hi[i]*perDiv[mk])})</span>`:""}`;
+  hover(el,svg,W,m,x,n,i=>`<b>${dayLbl(H[i])}</b><br>${line("buy",r.fund,h.buy,h.buy_lo,h.buy_hi,i)}<br>${line("sell",r.sell,h.sell,h.sell_lo,h.sell_hi,i)}`+
+     (h.buy[i]!=null&&h.sell[i]!=null?`<br>gap <b>${(h.sell[i]/h.buy[i]).toFixed(2)}×</b>`:""),
+   i=>{[[d1,h.buy],[d2,h.sell]].forEach(([c,a])=>{if(i<0||a[i]==null){c.style.display="none";return}c.style.display="";c.setAttribute("cx",x(i));c.setAttribute("cy",y(a[i]))})});
+}
+function gapChart(r){
+  const el=document.getElementById("gc"+r.i);const h=r.hist,W=320,Hh=210,m={l:36,r:10,t:10,b:24},n=H.length;
+  const g=h.buy.map((b,i)=>b!=null&&h.sell[i]!=null?h.sell[i]/b:null);const vals=g.filter(v=>v!=null);
+  const yt=niceTicks(0,Math.max(INFO.min_gap*1.2,...vals));const y1=yt[yt.length-1];
+  const x=i=>m.l+(i+0.5)*(W-m.l-m.r)/n,y=v=>m.t+(1-v/y1)*(Hh-m.t-m.b);const bw=Math.max(2,(W-m.l-m.r)/n-2);
+  const xl=i=>m.l+i*(W-m.l-m.r)/Math.max(n-1,1);
+  let bars="";g.forEach((v,i)=>{if(v==null)return;const top=y(v),base=y(0);
+    bars+=`<path d="M${x(i)-bw/2},${base}V${top+Math.min(3,(base-top)/2)}q0,-3 3,-3h${bw-6}q3,0 3,3V${base}Z" fill="${v>=INFO.min_gap?"var(--bar)":"var(--barlow)"}"/>`});
+  let grid="";yt.forEach(v=>{grid+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${m.l-6}" y="${y(v)+3.5}" text-anchor="end">${fmt(v)}×</text>`});
+  H.forEach((ts,i)=>{if(i%8===0)grid+=`<text x="${x(i)}" y="${Hh-m.b+16}" text-anchor="middle">${hourLbl(ts)}</text>`});
+  el.innerHTML=`<div class="t">Gap per hour (sell ÷ buy)</div><div class="legend"><span class=sub>grey = below ${INFO.min_gap}× · dashed = ${INFO.min_gap}× line</span></div>
+   <svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="hourly gap for ${esc(r.short)}">${grid}${bars}
+   <line x1="${m.l}" x2="${W-m.r}" y1="${y(INFO.min_gap)}" y2="${y(INFO.min_gap)}" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="5 4"/>
+   <line class="cross" y1="${m.t}" y2="${Hh-m.b}" stroke="var(--mut)" stroke-dasharray="3 3" style="display:none"/>
+   <rect class="ov" x="${m.l}" y="0" width="${W-m.l-m.r}" height="${Hh}" fill="transparent"/></svg>`;
+  const svg=el.querySelector("svg");
+  hover(el,svg,W,{l:m.l+(W-m.l-m.r)/n/2,r:m.r+(W-m.l-m.r)/n/2},x,n,i=>`<b>${dayLbl(H[i])}</b><br>gap <b>${g[i]==null?"no trades":g[i].toFixed(2)+"×"}</b>`);
+}
+
+/* ---------- planner ---------- */
+const IDS=["div","chaos","ex","gold","hours","maxg","reserve"];
+function loadInputs(){try{const s=JSON.parse(localStorage.getItem("orbflow-stash")||"{}");IDS.forEach(k=>{if(s[k]!=null)document.getElementById("in_"+k).value=s[k]});
+  if(s.unknown!=null)document.getElementById("in_unknown").checked=s.unknown}catch(e){}}
+function saveInputs(v){try{localStorage.setItem("orbflow-stash",JSON.stringify(v))}catch(e){}}
+function plan(){
+  const v={};IDS.forEach(k=>v[k]=Math.max(0,+document.getElementById("in_"+k).value||0));v.unknown=document.getElementById("in_unknown").checked;saveInputs(v);
+  const out=document.getElementById("plan");
+  if(!v.gold||!(v.div||v.chaos||v.ex)){out.innerHTML='<p class=sub>Enter your div, chaos, ex and gold to get a plan.</p>';return}
+  const own={divine:v.div,chaos:v.chaos/perDiv.chaos,exalted:v.ex/perDiv.exalted};   // in div-equivalent
+  let gold=v.gold*(1-v.reserve/100);const used=new Set(),steps=[];let profit=0,goldUsed=0;
+  const cands=R.filter(r=>(v.unknown||r.gold_known)&&(!v.maxg||r.gold_per_div<=v.maxg)).sort((a,b)=>a.gold_per_div-b.gold_per_div);
+  for(const r of cands){
+    if(used.has(r.item)||gold<=0)continue;
+    // buying and then selling must both fit in the hours you can wait; we get fill_share of each market's flow
+    const itemsMax=Math.max(v.hours,0.5)/(1/(INFO.fill_share*r.units_f)+1/(INFO.fill_share*r.units_s));
+    const cap=itemsMax/r.n_items;   // div put in that the markets absorb
+    const gInNoFirst=(r.gold_per_div*r.profit_div)-r.gold_first, gIn=r.gold_per_div*r.profit_div;   // gold per div put in
+    let x1=0,x2=0;
+    if(r.fund!=="divine"){x1=Math.min(cap,own[r.fund],gold/gInNoFirst);}
+    x2=Math.min(cap-x1,own.divine,(gold-x1*gInNoFirst)/gIn);x2=Math.max(0,x2);
+    const tot=x1+x2;if(tot*r.n_items<1)continue;
+    if(r.fund!=="divine")own[r.fund]-=x1;own.divine-=x2;
+    const g=x1*gInNoFirst+x2*gIn;gold-=g;goldUsed+=g;used.add(r.item);
+    const p=tot*r.profit_div;profit+=p;steps.push({r,x1,x2,tot,g,p});
+    if(steps.length>=6)break;
+  }
+  if(!steps.length){out.innerHTML='<p class=sub>No route fits: not enough gold or currency for even one item. Try more hours or the unknown-fee routes.</p>';return}
+  const fUnits=(r,dv)=>dv*perDiv[r.fund];
+  out.innerHTML=`<ol>${steps.map(s=>{const r=s.r,fm=MS[r.fund],items=s.tot*r.n_items;
+    const fund=r.fund==="divine"?`${fmt(s.x2,3)} div`:`${fmtInt(fUnits(r,s.tot))} ${fm}`+(s.x2>0.01?` <span class=sub>(convert ${fmt(s.x2,2)} div → ${fmtInt(fUnits(r,s.x2))} ${fm} first)</span>`:"");
+    return `<li><b>${esc(r.short)}</b> ${r.route}${r.proven?'<span class="tag ok">proven</span>':""}${r.gold_known?"":'<span class="tag warn">gold?</span>'}<br>
+      Buy ~${fmtInt(items)} at ~${fmt(r.buy_unit)} ${fm} each with ${fund}; sell at ${sellPer(r.sell_per,MS[r.sell])}.
+      <span class=sub>Expected +${s.p.toFixed(2)} div · ${fmtInt(s.g)} gold · ~${(items/(INFO.fill_share*r.units_f)+items/(INFO.fill_share*r.units_s)).toFixed(1)} h</span></li>`}).join("")}</ol>
+    <div class="sum"><div>expected profit<b>+${profit.toFixed(1)} div</b></div><div>gold used<b>${fmtInt(goldUsed)}</b></div>
+      <div>gold left<b>${fmtInt(v.gold-goldUsed)}</b></div><div>idle currency<b>${fmt(own.divine,3)} div · ${fmtInt(own.chaos*perDiv.chaos)} chaos · ${fmtInt(own.exalted*perDiv.exalted)} ex</b></div></div>
+    <p class=sub>Greedy by gold per div of profit (max ${fmtInt(v.maxg)}), capped so buying + selling fit in ${v.hours} h (we assume we get ${Math.round(INFO.fill_share*100)}% of the flow).
+      Prices are past hours: check the live ratio before ordering.</p>`;
+}
+loadInputs();document.querySelectorAll("#planner input").forEach(i=>i.addEventListener("input",plan));
+renderTable();plan();
+</script></body></html>
