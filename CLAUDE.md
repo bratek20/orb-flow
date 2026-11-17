@@ -18,6 +18,8 @@ No scheduled tasks. Data is only downloaded while we work.
 
 ## Main tools
 - `python -m orbflow.chains --budget N`: ranked buy-in-one-market / sell-in-another chains, with fill-time estimates
+- `python -m orbflow.board [--collect|--serve]`: robust round finder (per-hour gap check, gold per leg) -> reports/board.html;
+  `--serve` refreshes hourly and serves it on the LAN (phone). This is the no-Claude view.
 - `python -m orbflow.trades add|fill|cancel|list|calib`: log of real orders (ground truth for fill times and gold)
 - `python -m orbflow.scan`: raw cross-pair gaps. `journal`: advice log and grading. `backtest`: v0 harness
 
