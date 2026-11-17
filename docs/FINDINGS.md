@@ -88,6 +88,7 @@ The exchange UI shows ratios as **want : have**. In the sell window (want ex, ha
 | Omen of Abyssal Echoes | 1000 | ~45 at ~22 ex |
 | Omen of Chaotic Rarity | 450 | ~5.6 at ~81 ex |
 | Vaal Armourer's Infuser | 250 | ~0.7 at ~350 ex |
+| Omen of Chaotic Monsters | 450 | ~16 at ~28 ex |
 - The gold goes into the BUY leg (many cheap units). Selling into chaos/div costs almost nothing.
 - Selling for exalts is the gold-worst move. Prefer chaos/div as the sell currency, then convert only if needed.
 - Player's GCP flip: bought 14 for 208 ex (14.9 each), sold 20 for 21 chaos (~58 ex each).
