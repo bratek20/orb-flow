@@ -182,3 +182,5 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   Gold fee unknown (omens seen at 450 and 1000). Next test candidate.
 - Regal still 67-77 regal/div vs 0.5-0.76 ex in the ex market.
 - Rejected after the per-snapshot check: chayulas-cat, uncut-skill-gem-19, sin-necromancy. Their ratios jump 3-10x between hours (thin, noisy).
+- Monsters test: bought 10 at 1.67/chaos (450 gold each), first 7 sold at **7 per div**. The round works: ~2x per round,
+  ~7.4k gold per div of profit. Scaling with a 30-unit bid.

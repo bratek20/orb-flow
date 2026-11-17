@@ -20,5 +20,5 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 19,2026-11-17T03:59,2026-11-17T03:59,filled,divine,6.0,vaal-armourers-infuser,4.0,4800,"sell infuser 1.5 div each, filled"
 20,2026-11-17T04:11,2026-11-17T04:18,filled,omen-of-chaotic-monsters,10.0,chaos,6.0,4500,"bid 1.667/chaos, beats best competing 1.70"
 21,2026-11-17T04:14,,open,chaos,104.0,divine,10.0,16640,"fund chaos routes, 10.4 chaos/div (instant/best offer)"
-22,2026-11-17T04:18,,open,divine,2.0,omen-of-chaotic-monsters,14.0,1600,sell monsters 7/div
+22,2026-11-17T04:18,,partial,divine,2.0,omen-of-chaotic-monsters,14.0,1600,sell monsters 7/div | 04:20 7 sold for 1 div
 23,2026-11-17T04:20,,open,omen-of-chaotic-monsters,30.0,chaos,18.0,13500,"bid 1.667/chaos, scale-up"
