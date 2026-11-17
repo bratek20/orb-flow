@@ -18,11 +18,16 @@ the toolbox. Read `docs/PLAN.md` (roadmap) and `docs/FINDINGS.md` (what we learn
 No scheduled tasks. Data is only downloaded while we work.
 
 ## Main tools
-- `python -m orbflow.chains --budget N`: ranked buy-in-one-market / sell-in-another chains, with fill-time estimates
-- `python -m orbflow.board [--collect|--serve]`: robust round finder (per-hour gap check, gold per leg) -> reports/board.html;
-  `--serve` refreshes hourly and serves it on the LAN (phone). This is the no-Claude view.
-- `python -m orbflow.trades add|fill|cancel|list|calib`: log of real orders (ground truth for fill times and gold)
-- `python -m orbflow.scan`: raw cross-pair gaps. `journal`: advice log and grading. `backtest`: v0 harness
+- `python -m orbflow.ggg [--hours N] [--show <item>]`: GGG public hourly feed (the main data source), avg/low/high per hour
+- `python -m orbflow.board [--collect|--serve]`: robust round finder on GGG hours (per-hour gap check, gold on every leg,
+  low/high prices) -> reports/board.html. `--serve` refreshes hourly and serves it at http://<pc-ip>:8765/board.html
+  (phone on the same Wi-Fi). This is the no-Claude view.
+- `python -m orbflow.cycles --legs "div>chaos@10.4" "chaos>monsters@1.67" "monsters>div@/7"`: one full round with gold per leg
+  (use the player's live ratios). `--scan` is the older poe2scout-based version of the board.
+- `python -m orbflow.liquidity <item> --qty N`: units/h per market, queue size, time-to-fill estimate
+- `python -m orbflow.trades add|fill|cancel|gold|list|calib`: log of real orders (ground truth for fills AND gold fees;
+  `chains.gold_table` reads fees from here). After each change re-export data/trades.csv (it's committed; the DB is not).
+- `python -m orbflow.names [short]`: short-name table. Older/less used: `chains`, `scan`, `journal`, `backtest`.
 
 ## Item names
 The player writes full names; gently remind them of the short name (they want to learn them).
@@ -40,15 +45,24 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
   Treat API numbers as leads and ask the player for live ratios before recommending real trades.
 - Python stdlib only; run modules as `python -m orbflow.<module>` from the repo root.
 
-## Where we left off (2026-11-16)
-- 2026-11-17: echoes (140) and regal->13 div filled overnight; 3 armour-infusers bought at 6 chaos, ask 1.67 div did not fill (reprice to 1.5).
-- Player made +30 div with the ex -> regal -> div loop. Holdings 2026-11-16 evening: 242 ex, 40 chaos, 33 div
-  (+ open orders: 140 echoes for 50 chaos, 828 regal -> 12 div). Gold ~1.0M (spent ~400k for the +30 div, ~13.3k gold per div).
-- Proposed next: test Omen of Chaotic Rarity (buy with ex ~60, sell for chaos/div ~300-390) and chaos-funded
-  Omen of Abyssal Echoes (buy with chaos ~24 ex, sell for div ~52). Need per-unit gold fee for omens.
+## Strategy playbook (what we learned, details in docs/FINDINGS.md)
+- Core edge: many items trade far cheaper vs ex (or chaos) than vs div. Buy in the cheap market, sell for div.
+- GOLD is the binding constraint, not currency. Fee = units WANTED x per-unit fee of the wanted item
+  (ex 120, regal 120, chaos 160, div 800, infuser 250, rarity/monsters 450, echoes/gcp 1000; table in FINDINGS).
+  Rank routes by gold per div of profit. Fund with chaos (div->chaos ~1.7k gold/div), not ex (~72k gold/div).
+- Proven rounds: ex->regal->div (+30 div, ~13-15k gold/div profit); chaos->echoes->div (5-8/div, 7.5-13k);
+  chaos->monsters->div (1.67/chaos -> 7/div, ~7k gold/div, best now); armour-infuser worked once at 6 chaos but
+  the normal price is 12-16 chaos (one dump hour) -> no edge.
+- Before calling a gap real, check it hour by hour (`ggg --show`), not as an average. Then ask the player for the live book.
+- The player reports trades as "want_qty want - give_qty give (gold)", e.g. "10 monsters - 6 chaos (4500)".
+  Log every one with `trades add` (gold included) and note fills.
+
+## Where we left off (2026-11-17, morning)
+- Holdings (approx): ~45 div, ~180 chaos, 58 ex; gold ~0.75M (estimate, ask). Open orders (see `trades list`):
+  #18 140 echoes -> 28 div (5/div, ambitious; fallback 6, never below 8), #22 7 monsters left -> 1 div,
+  #23 buy 30 monsters for 18 chaos. Player also wanted a p-charging-rune (~6-8 div) for personal use.
+- Next: scale monsters if #23 fills and sells hold 7/div (bids of 50-100); test sin-necromancy (ex 1-2.5 -> div 0.05-0.08,
+  gold fee unknown); fill in unknown gold fees ("gold?" on the board) for catalysts/omens.
+- Ideas not done: host the board on GitHub Pages via Actions (player decides; "no scheduled tasks" was about Claude),
+  alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times, `trades import` from CSV.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.
-- Backlog: calibrate FILL_SHARE from fills, `trades import` from data/trades.csv,
-  use poe.ninja as a second price source inside chains (snapshot prices are noisy with only a few snapshots).
-- `python -m orbflow.liquidity <item> --qty N` answers "how long will it take to sell".
-- `python -m orbflow.cycles --legs ...` / `--scan`: full rounds div->...->div with gold on EVERY leg, plus a poe.ninja check.
-  Gold is now the player's main constraint: rank by ex per 1k gold. Collect per-unit gold fees for catalysts/omens/infusers.

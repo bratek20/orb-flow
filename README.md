@@ -11,22 +11,22 @@ ToS, so you always place orders by hand.
 ## Quick start
 
 ```bash
-python -m orbflow.collect --backfill-hours 336   # snapshot all pairs + 2 weeks of hourly item prices
-python -m orbflow.scan                            # cross-pair price gaps (leads to verify in-game)
-python -m orbflow.journal advise                  # log current leads as advice
-python -m orbflow.journal grade                   # later: grade old advice against the newest snapshot
-python -m orbflow.journal stats
-python -m orbflow.backtest [--grid]               # walk-forward backtest of the spread strategy (v0)
+python -m orbflow.ggg --hours 48        # GGG public exchange feed: last 48 hourly digests
+python -m orbflow.collect               # one poe2scout snapshot (used to map game ids to item names)
+python -m orbflow.board --serve         # trade board, refreshed hourly: http://localhost:8765/board.html
+python -m orbflow.cycles --legs "div>chaos@10.4" "chaos>monsters@1.67" "monsters>div@/7"   # one round, gold per leg
+python -m orbflow.trades list           # your logged orders (fills and gold fees)
 ```
 
-The code uses only the Python 3.11+ standard library. Data goes to `data/orbflow.db` (SQLite, git-ignored).
+The code uses only the Python 3.11+ standard library. Data goes to `data/orbflow.db` (SQLite, git-ignored);
+the trade log is also exported to `data/trades.csv`.
 
 ## Data sources
 
 | Source | What it gives | Notes |
 |---|---|---|
-| `api.poe2scout.com/poe2/...` (OpenAPI at `/openapi/v1.json`) | Latest hourly snapshot of every exchange pair (units traded on each side, stock); hourly price and quantity history per item | No key needed. History per *item* blends all pairs together, see `docs/PLAN.md` |
-| `poe.ninja/poe2/api/economy/...` | Price per item and its most-traded pair | No key needed |
-| GGG `pathofexile.com/api/currency-exchange/poe2/{ts}` | Official hourly digests per pair with **lowest/highest ratio** and stock | Needs an OAuth app (`service:cxapi`) registered with GGG. This is the best source |
+| GGG `web.poecdn.com/api/currency-exchange/poe2/{unix hour}` | Official hourly digest of every pair: volume, **lowest/highest ratio**, stock. Full history | Public, no login. Items are game metadata paths, mapped to names by `orbflow.ggg` |
+| `api.poe2scout.com/poe2/...` | Latest hour of every pair (same data as GGG), item names | Used for name mapping |
+| `poe.ninja/poe2/api/economy/...` | Price per item and its most-traded pair | Cross-check |
 
 See [`docs/PLAN.md`](docs/PLAN.md) for the roadmap and [`docs/FINDINGS.md`](docs/FINDINGS.md) for what the data has shown so far.

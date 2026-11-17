@@ -25,10 +25,9 @@ tune on the first half, test on the second).
 - [x] `backtest`: walk-forward harness plus a spread-band strategy (v0, see the known flaw below)
 
 ### Phase 1: trustworthy data (next)
-1. **Hourly collector on a schedule** (Windows Task Scheduler runs `python -m orbflow.collect`).
-   poe2scout only serves the *latest* pair snapshot, so per-pair history exists only if we record it.
-2. **GGG official cxapi**: register an OAuth app, then backfill the whole league per pair with
-   lowest and highest ratios. That is real bid/ask information instead of a hourly average.
+1. [x] **Per-pair history**: GGG's public feed (`orbflow.ggg`) gives every hour back to league start, so no
+   collector schedule is needed. (OAuth application dropped: the feed is public.)
+2. [x] **Low/high ratios** per pair per hour from the same feed; the board uses them.
 3. **Ground-truth log**: a tiny CLI where you type what you actually saw or filled in game
    (`orbflow log regal ex 1:1.05 div 52:1`). This calibrates how far API numbers sit from the live book.
 
@@ -43,7 +42,7 @@ tune on the first half, test on the second).
 - `orbflow report` produces a ranked plan for a given budget (what, buy price, sell price, size).
 - Recommendation thresholds auto-tuned from journal stats; strategies with poor live EV are auto-disabled.
 - Optional notifications (Discord or Telegram webhook) when a strong lead appears.
-- Later, possibly: a small dashboard.
+- [x] Dashboard: `orbflow.board --serve` (LAN). Next: host it (GitHub Pages) so it works without the PC.
 
 ## Known flaw in v0 backtest
 poe2scout's per-item hourly price mixes pairs (vs ex, vs chaos, vs divine) that imply very different
