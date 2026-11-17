@@ -19,3 +19,4 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 18,2026-11-17T03:54,,open,divine,28.0,omen-of-abyssal-echoes,140.0,22400,"sell echoes 5/div, player says best competing ask in game (ninja 8.1/div, snapshot ~10/div)"
 19,2026-11-17T03:59,2026-11-17T03:59,filled,divine,6.0,vaal-armourers-infuser,4.0,4800,"sell infuser 1.5 div each, filled"
 20,2026-11-17T04:11,,open,omen-of-chaotic-monsters,10.0,chaos,6.0,4500,"bid 1.667/chaos, beats best competing 1.70"
+21,2026-11-17T04:14,,open,chaos,104.0,divine,10.0,16640,"fund chaos routes, 10.4 chaos/div (instant/best offer)"
