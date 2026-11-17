@@ -23,5 +23,6 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 22,2026-11-17T04:18,,partial,divine,2.0,omen-of-chaotic-monsters,14.0,1600,sell monsters 7/div | 04:20 7 sold for 1 div
 23,2026-11-17T04:20,,open,omen-of-chaotic-monsters,30.0,chaos,18.0,13500,"bid 1.667/chaos, scale-up"
 24,2026-11-17T13:34,,open,divine,2.0,omen-of-sinistral-necromancy,30.0,1600,sell sin-necromancy 15/div; player: not selling well
-25,2026-11-17T13:34,,open,divine,9.0,omen-of-chaotic-monsters,63.0,7200,sell monsters 7/div (9 div : 63); gold assumed 9x800; competitor 1:10 stock 50 ahead
+25,2026-11-17T13:34,2026-11-17T13:43,cancelled,divine,9.0,omen-of-chaotic-monsters,63.0,7200,sell monsters 7/div (9 div : 63); gold assumed 9x800; competitor 1:10 stock 50 ahead
 26,2026-11-17T13:41,2026-11-17T13:41,filled,omen-of-chaotic-monsters,75.0,chaos,45.0,33750,instant buy 1.67/chaos for quick flip
+27,2026-11-17T13:43,,open,divine,20.0,omen-of-chaotic-monsters,140.0,16000,sell monsters 7/div; replaces #25 (63) + #26 (75) in one order
