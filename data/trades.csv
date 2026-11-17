@@ -26,3 +26,5 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 25,2026-11-17T13:34,2026-11-17T13:43,cancelled,divine,9.0,omen-of-chaotic-monsters,63.0,7200,sell monsters 7/div (9 div : 63); gold assumed 9x800; competitor 1:10 stock 50 ahead
 26,2026-11-17T13:41,2026-11-17T13:41,filled,omen-of-chaotic-monsters,75.0,chaos,45.0,33750,instant buy 1.67/chaos for quick flip
 27,2026-11-17T13:43,,open,divine,20.0,omen-of-chaotic-monsters,140.0,16000,sell monsters 7/div; replaces #25 (63) + #26 (75) in one order
+28,2026-11-17T13:52,2026-11-17T13:52,filled,omen-of-chaotic-monsters,95.0,chaos,57.0,42750,instant buy 1.67/chaos
+29,2026-11-17T13:52,,open,divine,14.0,omen-of-chaotic-monsters,98.0,11200,sell monsters 7/div (95 from #28 + 3 extra)
