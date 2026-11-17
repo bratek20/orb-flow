@@ -157,3 +157,11 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   +1.85 div, gold 26.6k (echo leg 22.8k) = **14.4k gold per div of profit**, about the same as regal. At 9/div: ~17k (worse).
   Correction from the player: the book is competing (buyers) 2.9 echoes/chaos, available (instant) 2.5. Our 2.8 bid sits ahead
   of the 2.9 queue. Instant buy at 2.5 -> ~14.0k gold per div of profit (sell at 8/div).
+
+## 2026-11-17: overnight results
+- Filled overnight: 140 echoes for 50 chaos (2.8/chaos, 140k gold); 13 div for 936 regal (**72 regal/div**, 10.4k gold = 800/div);
+  3 armour-infusers for 18 chaos (6 chaos each).
+- NOT filled overnight: selling 3 armour-infusers for 5 div (1.67 div each). Market: div side ~847 ex in snapshots,
+  poe.ninja 775 ex = ~1.58 div; ~235/h trade vs div but ~5.9k infusers stocked on the seller side. 1.67 is above the market.
+  Next ask: 1.5 div each (3 div for 2).
+- poe.ninja now: div 491 ex, echoes 60.8 ex (= 8.1 per div), so selling echoes at 8/div is right at the market.

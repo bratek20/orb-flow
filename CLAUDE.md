@@ -38,6 +38,7 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 - Python stdlib only; run modules as `python -m orbflow.<module>` from the repo root.
 
 ## Where we left off (2026-11-16)
+- 2026-11-17: echoes (140) and regal->13 div filled overnight; 3 armour-infusers bought at 6 chaos, ask 1.67 div did not fill (reprice to 1.5).
 - Player made +30 div with the ex -> regal -> div loop. Holdings 2026-11-16 evening: 242 ex, 40 chaos, 33 div
   (+ open orders: 140 echoes for 50 chaos, 828 regal -> 12 div). Gold ~1.0M (spent ~400k for the +30 div, ~13.3k gold per div).
 - Proposed next: test Omen of Chaotic Rarity (buy with ex ~60, sell for chaos/div ~300-390) and chaos-funded

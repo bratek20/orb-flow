@@ -12,6 +12,7 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 11,2026-11-16T17:27,2026-11-16T17:27,filled,omen-of-chaotic-rarity,10.0,exalted,810.0,4500,buy rarity 81 ex each
 12,2026-11-16T17:27,2026-11-16T17:27,filled,chaos,58.0,omen-of-chaotic-rarity,10.0,9280,sell rarity 5.8 chaos each
 13,2026-11-16T17:31,2026-11-16T17:31,filled,divine,2.0,omen-of-abyssal-echoes,16.0,1600,sold echoes 8/div
-14,2026-11-16T17:31,,open,omen-of-abyssal-echoes,140.0,chaos,50.0,140000,buy echoes 2.8/chaos
-15,2026-11-16T17:34,,open,divine,12.0,regal,828.0,,sell regal 69/div
-16,2026-11-16T17:39,,open,vaal-armourers-infuser,3.0,chaos,18.0,750,"bid 6 chaos each, first in line"
+14,2026-11-16T17:31,2026-11-17T08:00,filled,omen-of-abyssal-echoes,140.0,chaos,50.0,140000,buy echoes 2.8/chaos | filled overnight (time unknown)
+15,2026-11-16T17:34,2026-11-17T08:00,filled,divine,13.0,regal,936.0,10400,"sell regal 72/div, filled overnight (time unknown)"
+16,2026-11-16T17:39,2026-11-17T08:00,filled,vaal-armourers-infuser,3.0,chaos,18.0,750,"bid 6 chaos each, first in line | filled overnight (time unknown)"
+17,2026-11-16T20:00,,open,divine,5.0,vaal-armourers-infuser,3.0,4000,sell infuser 1.67 div each; NOT filled overnight
