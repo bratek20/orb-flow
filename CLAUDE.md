@@ -58,6 +58,7 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 - Proven rounds: ex->regal->div (+30 div, ~13-15k gold/div profit); chaos->echoes->div (5-8/div, 7.5-13k);
   chaos->monsters->div (1.67/chaos -> 7/div, ~7k gold/div, best now); armour-infuser worked once at 6 chaos but
   the normal price is 12-16 chaos (one dump hour) -> no edge.
+- Cancelling does NOT refund gold: every reprice pays the fee again. Price orders once, carefully.
 - Before calling a gap real, check it hour by hour (`ggg --show`), not as an average. Then ask the player for the live book.
 - The player reports trades as "want_qty want - give_qty give (gold)", e.g. "10 monsters - 6 chaos (4500)".
   Log every one with `trades add` (gold included) and note fills.

@@ -213,3 +213,7 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   2-11k units. The gap is real in price but you sit at the back of the queue. Check queue/volume before calling it an edge.
 - uncut-skill-gem-19: div side steady at 0.333 (3/div) for 4 hours (27-87/h, queue ~760); ex side 4-70 ex (avg 12-23). Test candidate.
 - sin-exaltation: chaos ~0.45-0.9, div ~0.09-0.10 (10-11/div), 280-940/h on div. Monsters-like route, gold fee unknown.
+- **Cancelling an order does NOT refund the gold fee** (player, 2026-11-17, cancelled #25 9 div : 63 monsters = 7,200 gold lost).
+  So every reprice pays the full fee again: choose the price once, and prefer fewer, bigger orders over many small edits.
+  For sell orders into div the fee is 800/div, so a reprice costs ~0.1-0.2 div of gold per 20 div order; for buy orders of omens
+  (450/unit) it is much more.
