@@ -165,3 +165,5 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   poe.ninja 775 ex = ~1.58 div; ~235/h trade vs div but ~5.9k infusers stocked on the seller side. 1.67 is above the market.
   Next ask: 1.5 div each (3 div for 2).
 - poe.ninja now: div 491 ex, echoes 60.8 ex (= 8.1 per div), so selling echoes at 8/div is right at the market.
+- In-game echoes book (player, morning): best competing ask **5 echoes per div**, far above poe.ninja (8.1/div) and snapshots (~10/div).
+  The API lags or the price spiked. Listed 140 echoes for 28 div (22.4k gold). If it fills: round = ~7.5k gold per div of profit.

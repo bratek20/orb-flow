@@ -16,3 +16,4 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 15,2026-11-16T17:34,2026-11-17T08:00,filled,divine,13.0,regal,936.0,10400,"sell regal 72/div, filled overnight (time unknown)"
 16,2026-11-16T17:39,2026-11-17T08:00,filled,vaal-armourers-infuser,3.0,chaos,18.0,750,"bid 6 chaos each, first in line | filled overnight (time unknown)"
 17,2026-11-16T20:00,,open,divine,5.0,vaal-armourers-infuser,3.0,4000,sell infuser 1.67 div each; NOT filled overnight
+18,2026-11-17T03:54,,open,divine,28.0,omen-of-abyssal-echoes,140.0,22400,"sell echoes 5/div, player says best competing ask in game (ninja 8.1/div, snapshot ~10/div)"
