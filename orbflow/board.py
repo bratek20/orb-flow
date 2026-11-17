@@ -150,6 +150,8 @@ MONEY_SHORT = {"exalted": "ex", "chaos": "chaos", "divine": "div"}
 
 def render(rows, info, league, refresh_s):
     last = info.get("last", "-")
+    if isinstance(last, int) and last > 1_000_000_000:   # GGG hour = unix time
+        last = dt.datetime.fromtimestamp(last, dt.timezone.utc).strftime("%Y-%m-%d %H:00 UTC")
     def fmt_buy(r):
         lo = f" · low {r['buy_low']:.3g}" if r.get("buy_low") else ""
         return f"{r['buy_unit']:.3g} {MONEY_SHORT[r['fund']]} each<div class=sub>{r['buy_ex']:.1f} ex{lo}</div>"
@@ -181,7 +183,7 @@ def render(rows, info, league, refresh_s):
             f"<td data-v={min(r['units_f'], r['units_s']):.0f}>{r['units_f']:.0f} / {r['units_s']:.0f}</td>"
             f"<td data-v={r['hours']:.2f}>{r['hours']:.1f}</td></tr>")
     body = "\n".join(trs) or '<tr><td colspan=10>No stable routes in the data. Collect more snapshots.</td></tr>'
-    now = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     return f"""<!doctype html><html><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta http-equiv=refresh content="{refresh_s}">
@@ -199,7 +201,7 @@ td[data-v]{{font-variant-numeric:tabular-nums}} .sub{{color:var(--mut);font-size
 details{{margin-top:16px;color:var(--mut)}}
 </style></head><body>
 <h1>OrbFlow Board · {html.escape(league)}</h1>
-<div class=meta>Built {now} · data hour {html.escape(str(last))} · {info.get('snaps', 0)} hourly snapshots ·
+<div class=meta>Built {now} · data hour {html.escape(str(last))} · {info.get('snaps', 0)} hours of data ·
 1 div = {info.get('div_ex', 0):.0f} ex = {info.get('chaos_per_div', 0):.1f} chaos · page refreshes every {refresh_s // 60} min</div>
 <div class=wrap><table id=t><thead><tr>
 <th>item</th><th>buy → sell</th><th>gold / div profit</th><th>div profit / div in</th><th>stable</th>

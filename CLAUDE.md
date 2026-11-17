@@ -21,7 +21,8 @@ No scheduled tasks. Data is only downloaded while we work.
 - `python -m orbflow.ggg [--hours N] [--show <item>]`: GGG public hourly feed (the main data source), avg/low/high per hour
 - `python -m orbflow.board [--collect|--serve]`: robust round finder on GGG hours (per-hour gap check, gold on every leg,
   low/high prices) -> reports/board.html. `--serve` refreshes hourly and serves it at http://<pc-ip>:8765/board.html
-  (phone on the same Wi-Fi). This is the no-Claude view.
+  (phone on the same Wi-Fi). This is the no-Claude view. Hosted: https://bratek20.github.io/orb-flow/ (GitHub Actions
+  `.github/workflows/board.yml` rebuilds it hourly at :25; repo https://github.com/bratek20/orb-flow, public).
 - `python -m orbflow.cycles --legs "div>chaos@10.4" "chaos>monsters@1.67" "monsters>div@/7"`: one full round with gold per leg
   (use the player's live ratios). `--scan` is the older poe2scout-based version of the board.
 - `python -m orbflow.liquidity <item> --qty N`: units/h per market, queue size, time-to-fill estimate
@@ -63,6 +64,5 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
   #23 buy 30 monsters for 18 chaos. Player also wanted a p-charging-rune (~6-8 div) for personal use.
 - Next: scale monsters if #23 fills and sells hold 7/div (bids of 50-100); test sin-necromancy (ex 1-2.5 -> div 0.05-0.08,
   gold fee unknown); fill in unknown gold fees ("gold?" on the board) for catalysts/omens.
-- Ideas not done: host the board on GitHub Pages via Actions (player decides; "no scheduled tasks" was about Claude),
-  alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times, `trades import` from CSV.
+- Ideas not done: alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times, `trades import` from CSV.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.
