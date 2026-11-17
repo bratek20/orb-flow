@@ -169,3 +169,7 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   The API lags or the price spiked. Listed 140 echoes for 28 div (22.4k gold). If it fills: round = ~7.5k gold per div of profit.
 - Sold 4 armour-infusers for 6 div (**1.5 div each**, 4.8k gold = 800/div). Bought at 6 chaos each (~0.63 div).
   Infuser round confirmed: ~2.4x per round, ~2.8k gold per div of profit. Still OK up to ~8-9 chaos buy price (~4k gold/div).
+- Player (2026-11-17): armour-infuser now **15 chaos each** in game. Snapshot history of the infuser/chaos pair, chaos per infuser:
+  16.0, 12.7, **6.1**, 9.4, 14.0. Our 6-chaos fill was a cheap hour (someone dumped). Normal is 12-16 chaos = ~1.3-1.6 div,
+  the same as the div-side price, so there's no edge at 15. Lesson: check the pair ratio PER SNAPSHOT, not the median
+  implied price, before calling a gap real. A low bid (6-8 chaos) left in the book can still catch dumps.
