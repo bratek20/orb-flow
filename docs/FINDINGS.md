@@ -199,3 +199,11 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   (infuser ~800 ex -> 250; gcp ~30 ex -> 1000), and no public formula exists. So fees must be learned per item
   (the game shows the fee before you place the order). Useful view: gold per ex of value received:
   ex 120, gcp ~33, echoes ~11-40, monsters ~6-16, chaos ~3.4, div ~1.6, infuser ~0.3.
+
+## 2026-11-17 midday (player report)
+- Sin-necromancy: bought 30 (price/gold not reported yet), listed 2 div : 30 (15/div, 1600 gold). Player: "not selling well".
+  GGG: only ~15 units/h sell for div, all at exactly 0.067 (15/div) = same price as the ~2.7k queue -> back of the line.
+  The ex->div gap on paper (35x) is real in price but the div side is too thin to scale.
+- Monsters: listed 6 div : 63 (10.5/div). The book shows another seller at 1:10 with 50 in stock. GGG 11h: 204 monsters
+  sold for div at avg 0.127 div (~7.9/div), range 6-15/div. So 10.5/div is already cheaper than the average fill.
+- Player says ex->regal->div "no longer so good" (no live numbers yet).
