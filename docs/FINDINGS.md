@@ -173,3 +173,11 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   16.0, 12.7, **6.1**, 9.4, 14.0. Our 6-chaos fill was a cheap hour (someone dumped). Normal is 12-16 chaos = ~1.3-1.6 div,
   the same as the div-side price, so there's no edge at 15. Lesson: check the pair ratio PER SNAPSHOT, not the median
   implied price, before calling a gap real. A low bid (6-8 chaos) left in the book can still catch dumps.
+
+## 2026-11-17: per-snapshot check of leads (5 snapshots)
+- Echoes are rising everywhere: div pair 0.085-0.108 div each, then **0.177 at 03:00** (~5.6/div, matches the player's 5/div ask);
+  chaos pair 0.39-0.49 chaos each, then 0.67. The div-vs-chaos gap is still ~2.5-3x.
+- Omen of Chaotic Monsters: stable in all 5 snapshots. Chaos 0.55-0.69 chaos each (~30 ex), div 0.13-0.17 div (~75 ex).
+  Gold fee unknown (omens seen at 450 and 1000). Next test candidate.
+- Regal still 67-77 regal/div vs 0.5-0.76 ex in the ex market.
+- Rejected after the per-snapshot check: chayulas-cat, uncut-skill-gem-19, sin-necromancy. Their ratios jump 3-10x between hours (thin, noisy).
