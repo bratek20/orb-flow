@@ -167,3 +167,5 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - poe.ninja now: div 491 ex, echoes 60.8 ex (= 8.1 per div), so selling echoes at 8/div is right at the market.
 - In-game echoes book (player, morning): best competing ask **5 echoes per div**, far above poe.ninja (8.1/div) and snapshots (~10/div).
   The API lags or the price spiked. Listed 140 echoes for 28 div (22.4k gold). If it fills: round = ~7.5k gold per div of profit.
+- Sold 4 armour-infusers for 6 div (**1.5 div each**, 4.8k gold = 800/div). Bought at 6 chaos each (~0.63 div).
+  Infuser round confirmed: ~2.4x per round, ~2.8k gold per div of profit. Still OK up to ~8-9 chaos buy price (~4k gold/div).
