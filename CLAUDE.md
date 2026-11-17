@@ -10,8 +10,11 @@ the toolbox. Read `docs/PLAN.md` (roadmap) and `docs/FINDINGS.md` (what we learn
    lowest/highest ratio per pair per hour. `python -m orbflow.ggg --show <item>` shows hourly avg/low/high per money market.
    No OAuth application is needed (decided 2026-11-17).
 3. If price history is older than ~1 day, also run `python -m orbflow.collect --backfill-hours 48`.
-4. Run `python -m orbflow.journal grade` so old advice gets scored before giving new advice.
-5. After analysis, journal new advice (`python -m orbflow.journal advise`) and add notable
+4. Read trade reports the player sent from the phone: `python -m orbflow.trades inbox` (GitHub issues with label `trade`),
+   check they make sense, then `python -m orbflow.trades inbox --apply` (logs them, re-exports data/trades.csv, closes the
+   issues). Commit + push data/trades.csv so the hosted board shows the new open orders.
+5. Run `python -m orbflow.journal grade` so old advice gets scored before giving new advice.
+6. After analysis, journal new advice (`python -m orbflow.journal advise`) and add notable
    learnings to `docs/FINDINGS.md`. When the player reports in-game ratios or fills, write them
    down there too. They are ground truth and beat the API numbers.
 
@@ -21,7 +24,8 @@ No scheduled tasks. Data is only downloaded while we work.
 - `python -m orbflow.ggg [--hours N] [--show <item>]`: GGG public hourly feed (the main data source), avg/low/high per hour
 - `python -m orbflow.board [--collect|--serve]`: robust round finder on GGG hours (per-hour gap check, gold on every leg,
   low/high prices) -> reports/board.html. `--serve` refreshes hourly and serves it at http://<pc-ip>:8765/board.html
-  (phone on the same Wi-Fi). This is the no-Claude view. Hosted: https://bratek20.github.io/orb-flow/ (GitHub Actions
+  (phone on the same Wi-Fi). This is the no-Claude view. It shows build age, a Reload button, a link to rerun the build,
+  and a "Report a trade" form that opens a pre-filled GitHub issue (the phone -> Claude inbox, see step 4 above). Hosted: https://bratek20.github.io/orb-flow/ (GitHub Actions
   `.github/workflows/board.yml` rebuilds it hourly at :25; repo https://github.com/bratek20/orb-flow, public).
 - `python -m orbflow.cycles --legs "div>chaos@10.4" "chaos>monsters@1.67" "monsters>div@/7"`: one full round with gold per leg
   (use the player's live ratios). `--scan` is the older poe2scout-based version of the board.

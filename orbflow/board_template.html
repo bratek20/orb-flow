@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="%%REFRESH%%">
 <title>OrbFlow Board</title>
 <style>
 :root{--bg:#fafaf7;--surface:#ffffff;--fg:#1d1d1b;--mut:#6b6b66;--line:#e3e2dc;--head:#f0efe9;--accent:#2a78d6;
@@ -45,9 +44,61 @@ tr.detail td{background:var(--bg);padding:12px}
 .tip b{font-variant-numeric:tabular-nums}
 svg text{fill:var(--mut);font-size:11px} svg .lab{fill:var(--fg);font-size:11px;font-weight:600}
 details{margin-top:16px;color:var(--mut)}
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 14px}
+.status .age{font-weight:600} .status .age.old{color:var(--warn)}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn:disabled{opacity:.45;cursor:default}
+details#report{margin-top:0;color:var(--fg)}
+#report summary{font-weight:600;font-size:16px;cursor:pointer}
+#report[open] summary{margin-bottom:10px}
+.kinds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.kinds label{border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--fg);font-size:13px}
+.kinds input{display:none} .kinds label:has(input:checked){background:var(--accent);border-color:var(--accent);color:#fff}
+.rf{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.rf label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+.rf label.wide{grid-column:1/-1}
+.rf input,.rf select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-size:16px;font-family:inherit}
+.preview{margin:12px 0 8px;padding:8px 10px;border-radius:6px;background:var(--bg);border:1px dashed var(--line);font-family:ui-monospace,monospace;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.hide{display:none!important}
 </style></head><body>
 <h1>OrbFlow Board · %%LEAGUE%%</h1>
 <div class="meta">%%META%%</div>
+<div class="status">
+  <span>Updated <span class="age" id="age">–</span></span>
+  <span class="sub" id="dataage"></span>
+  <button class="btn" id="reload" title="Load the newest published version of this page">Reload</button>
+  <a class="btn" id="rebuild" target="_blank" rel="noopener" title="Run the GitHub build now (needs GitHub login; takes ~2 min)">Rebuild on GitHub</a>
+</div>
+
+<details class="card" id="report"><summary>Report a trade</summary>
+  <div class="kinds" id="kinds">
+    <label><input type="radio" name="kind" value="new" checked>New order</label>
+    <label><input type="radio" name="kind" value="filled">Filled</label>
+    <label><input type="radio" name="kind" value="partial">Partly filled</label>
+    <label><input type="radio" name="kind" value="cancel">Cancelled</label>
+    <label><input type="radio" name="kind" value="note">Note</label>
+  </div>
+  <div class="rf">
+    <label class="wide k-ref">order<select id="r_ref"></select></label>
+    <label class="k-ref">or order #<input type="number" id="r_refnum" inputmode="numeric" min="1"></label>
+    <label class="k-qty"><span id="l_wq">want qty</span><input type="number" id="r_wq" inputmode="decimal" min="0" step="any"></label>
+    <label class="k-item">want item<input id="r_w" list="names" autocapitalize="off" autocomplete="off"></label>
+    <label class="k-qty"><span id="l_gq">give qty</span><input type="number" id="r_gq" inputmode="decimal" min="0" step="any"></label>
+    <label class="k-item">give item<input id="r_g" list="names" autocapitalize="off" autocomplete="off"></label>
+    <label class="k-gold">gold<input type="number" id="r_gold" inputmode="numeric" min="0" step="100"></label>
+    <label>when<input type="datetime-local" id="r_at"></label>
+    <label class="wide">note<input id="r_note" autocomplete="off"></label>
+  </div>
+  <datalist id="names"></datalist>
+  <div class="preview" id="r_prev"></div>
+  <button class="btn pri" id="r_send">Send via GitHub</button>
+  <button class="btn" id="r_copy">Copy text</button>
+  <button class="btn" id="r_clear">Clear</button>
+  <p class="sub">Opens a pre-filled GitHub issue (label <b>trade</b>). Tap <b>Submit</b> there (you must be logged in to GitHub).
+  Claude reads these issues later with <code>trades inbox</code>, logs them and closes them. Open orders on this page update
+  after that and the next build. The repo is public, so these issues are public too.</p>
+</details>
 
 <section class="card" id="planner">
   <h2>What should I trade now?</h2>
@@ -239,6 +290,59 @@ function plan(){
     <p class=sub>Greedy by gold per div of profit (max ${fmtInt(v.maxg)}), capped so buying + selling fit in ${v.hours} h (we assume we get ${Math.round(INFO.fill_share*100)}% of the flow).
       Prices are past hours: check the live ratio before ordering.</p>`;
 }
+// ---- freshness + reload ----
+const REFRESH_S=%%REFRESH%%, $=id=>document.getElementById(id);
+function ago(s){s=Math.max(0,s);if(s<90)return "just now";const m=Math.round(s/60);if(m<90)return m+" min ago";const h=m/60;return (h<10?h.toFixed(1):Math.round(h))+" h ago"}
+function tick(){const now=Date.now()/1000,a=$("age");a.textContent=ago(now-D.built);a.classList.toggle("old",now-D.built>2*3600);
+  const nx=new Date();nx.setUTCMinutes(25,0,0);if(nx<=new Date())nx.setUTCHours(nx.getUTCHours()+1);
+  const mins=Math.round((nx-Date.now())/60000)+3;
+  $("dataage").textContent=(D.last_hour?`newest GGG hour ended ${ago(now-D.last_hour-3600)} (GGG publishes ~1–1.5 h late) · `:"")+`next build in ~${mins} min`;}
+const fresh=()=>{location.href=location.pathname+"?t="+Date.now()};
+$("reload").onclick=fresh;
+$("rebuild").href=`https://github.com/${D.repo}/actions/workflows/board.yml`;
+tick();setInterval(tick,30000);
+setInterval(()=>{if(!formDirty())fresh()},REFRESH_S*1000);  // never wipe a half-filled report
+
+// ---- trade report -> GitHub issue ----
+$("names").innerHTML=D.names.map(n=>`<option value="${esc(n)}">`).join("");
+const OS=D.orders||[];
+const ordTxt=o=>`#${o.id} want ${fmt(o.want_qty,4)} ${o.want} for ${fmt(o.give_qty,4)} ${o.give}${o.status==="partial"?" (partial)":""}`;
+$("r_ref").innerHTML=`<option value="">${OS.length?"pick an open order…":"no open orders known"}</option>`+OS.map(o=>`<option value="${o.id}">${esc(ordTxt(o))}</option>`).join("");
+const pad=n=>String(n).padStart(2,"0");
+const nowLocal=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`};
+const F=["r_refnum","r_wq","r_w","r_gq","r_g","r_gold","r_note","r_at"];
+const kind=()=>document.querySelector('input[name=kind]:checked').value;
+const formDirty=()=>F.some(id=>$(id).value.trim()!=="")||$("r_ref").value!=="";
+const refId=()=>$("r_refnum").value||$("r_ref").value;
+function report(){
+  const k=kind(),ref=refId(),v=id=>$(id).value.trim(),o=OS.find(x=>String(x.id)===String(ref));
+  const lines=["<!-- orbflow-report v1 -->",`kind: ${k}`];let title,ok=true;
+  if(k==="new"){ok=v("r_wq")&&v("r_w")&&v("r_gq")&&v("r_g");
+    title=`new: ${v("r_wq")} ${v("r_w")} - ${v("r_gq")} ${v("r_g")}`+(v("r_gold")?` (${v("r_gold")})`:"");
+    lines.push(`want: ${v("r_wq")} ${v("r_w")}`,`give: ${v("r_gq")} ${v("r_g")}`,`gold: ${v("r_gold")}`);}
+  else if(k==="note"){ok=v("r_note");title=`note: ${v("r_note").slice(0,60)}`;if(ref)lines.push(`ref: ${ref}`);}
+  else{ok=ref;title=`${{filled:"filled",partial:"partial",cancel:"cancelled"}[k]} #${ref}`+(o?` (${fmt(o.want_qty,4)} ${o.want} for ${fmt(o.give_qty,4)} ${o.give})`:"");
+    lines.push(`ref: ${ref}`);
+    if(k==="partial"){ok=ok&&v("r_wq");title+=`: got ${v("r_wq")}`+(v("r_gq")?` for ${v("r_gq")}`:"");lines.push(`got: ${v("r_wq")}`,`paid: ${v("r_gq")}`);}}
+  lines.push(`at: ${v("r_at")||nowLocal()}`,`note: ${v("r_note")}`);
+  return {title,body:lines.join("\n"),ok:!!ok};
+}
+function upd(){const k=kind(),show=(c,on)=>document.querySelectorAll(c).forEach(e=>e.classList.toggle("hide",!on));
+  show(".k-ref",k!=="new");show(".k-item",k==="new");show(".k-gold",k==="new");show(".k-qty",k==="new"||k==="partial");
+  $("l_wq").textContent=k==="partial"?"got so far (wanted item)":"want qty";$("l_gq").textContent=k==="partial"?"paid so far (optional)":"give qty";
+  const r=report();$("r_prev").textContent=r.title+"\n\n"+r.body.split("\n").slice(1).join("\n");$("r_send").disabled=!r.ok;$("r_copy").disabled=!r.ok;
+  try{localStorage.setItem("orbflow_report",JSON.stringify({k,r_ref:$("r_ref").value,...Object.fromEntries(F.map(id=>[id,$(id).value]))}))}catch(e){}}
+try{const d=JSON.parse(localStorage.getItem("orbflow_report")||"null");if(d){F.forEach(id=>{if(d[id]!=null)$(id).value=d[id]});
+  if(d.r_ref&&OS.some(o=>String(o.id)===d.r_ref))$("r_ref").value=d.r_ref;
+  const kr=document.querySelector(`input[name=kind][value="${d.k}"]`);if(kr)kr.checked=true;if(formDirty())$("report").open=true;}}catch(e){}
+document.querySelectorAll("#report input,#report select").forEach(e=>e.addEventListener("input",upd));
+$("r_send").onclick=()=>{const r=report();if(!r.ok)return;
+  window.open(`https://github.com/${D.repo}/issues/new?labels=trade&title=${encodeURIComponent(r.title)}&body=${encodeURIComponent(r.body)}`,"_blank");
+  $("r_send").textContent="Sent? Clear when submitted";};
+$("r_copy").onclick=async()=>{const r=report();try{await navigator.clipboard.writeText(r.title+"\n"+r.body);$("r_copy").textContent="Copied"}catch(e){}setTimeout(()=>$("r_copy").textContent="Copy text",1500)};
+$("r_clear").onclick=()=>{F.forEach(id=>$(id).value="");$("r_ref").value="";$("r_send").textContent="Send via GitHub";upd()};
+upd();
+
 loadInputs();document.querySelectorAll("#planner input").forEach(i=>i.addEventListener("input",plan));
 renderTable();plan();
 </script></body></html>

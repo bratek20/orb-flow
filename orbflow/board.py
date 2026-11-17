@@ -155,6 +155,27 @@ MONEY_SHORT = {"exalted": "ex", "chaos": "chaos", "divine": "div"}
 TEMPLATE = Path(__file__).resolve().parent / "board_template.html"
 
 
+REPO = "bratek20/orb-flow"   # trade reports go to this repo's issues (label "trade"); `trades inbox` reads them
+
+
+def _short_names():
+    from .names import _table
+    return sorted(set(_table().values()))
+
+
+def _open_orders():
+    """Open/partial orders from the trades table, so the phone form can mark them filled/cancelled."""
+    try:
+        from .trades import SCHEMA
+        con = connect()
+        con.executescript(SCHEMA)
+        return [{"id": r["id"], "want": short(r["want"]), "want_qty": r["want_qty"], "give": short(r["give"]),
+                 "give_qty": r["give_qty"], "status": r["status"], "placed_at": r["placed_at"]}
+                for r in con.execute("SELECT * FROM trades WHERE status IN ('open','partial') ORDER BY id DESC")]
+    except Exception:
+        return []
+
+
 def render(rows, info, league, refresh_s):
     import json
     last = info.get("last", "-")
@@ -167,7 +188,9 @@ def render(rows, info, league, refresh_s):
             "buy_ex", "sell_ex", "buy_unit", "sell_per", "units_f", "units_s", "gold_known", "proven", "n_items", "gold_first",
             "buy_low", "sell_high", "hist"]
     data = {"rows": [{**{k: r.get(k) for k in keys}, "short": short(r["item"])} for r in rows],
-            "info": {k: info.get(k) for k in ("hours", "min_gap", "fill_share", "div_ex", "chaos_per_div", "ex_per_div")}}
+            "info": {k: info.get(k) for k in ("hours", "min_gap", "fill_share", "div_ex", "chaos_per_div", "ex_per_div")},
+            "built": int(time.time()), "last_hour": info.get("last") if isinstance(info.get("last"), int) else None,
+            "repo": REPO, "names": _short_names(), "orders": _open_orders()}
     js = json.dumps(data, separators=(",", ":"), default=float).replace("</", "<\\/")
     return (TEMPLATE.read_text(encoding="utf-8")
             .replace("%%REFRESH%%", str(refresh_s)).replace("%%LEAGUE%%", html.escape(league))

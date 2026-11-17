@@ -6,6 +6,7 @@
     python -m orbflow.trades cancel 3
     python -m orbflow.trades list
     python -m orbflow.trades calib     # fill speed vs. API volume -> FILL_SHARE estimate
+    python -m orbflow.trades inbox [--apply]   # reports sent from the board page (GitHub issues, label "trade")
 """
 from __future__ import annotations
 
@@ -56,6 +57,95 @@ def _now():
     return dt.datetime.now().strftime("%Y-%m-%dT%H:%M")
 
 
+# ---- inbox: trade reports sent from the board page as GitHub issues (label "trade") ----
+REPO = "bratek20/orb-flow"
+
+
+def _gh(*args):
+    import subprocess
+    return subprocess.run(["gh", *args, "-R", REPO], capture_output=True, text=True, encoding="utf-8", check=True).stdout
+
+
+def parse_report(body):
+    """'key: value' lines of an orbflow-report issue -> dict (None if it isn't one)."""
+    if "orbflow-report" not in (body or ""):
+        return None
+    d = {}
+    for line in body.splitlines():
+        if ":" in line and not line.startswith("<!--"):
+            k, v = line.split(":", 1)
+            d[k.strip().lower()] = v.strip()
+    return d
+
+
+def _qty_item(s):
+    q, _, item = s.strip().partition(" ")
+    return float(q), item.strip()
+
+
+def apply_report(con, d, issue_no):
+    """Apply one parsed report to the trades table. Returns a short description of what happened."""
+    from .names import resolve
+    k, at, note = d.get("kind"), d.get("at") or _now(), d.get("note", "")
+    tag = f"[gh#{issue_no}]"
+    ref = int(d["ref"]) if d.get("ref") else None
+    if ref is not None and not con.execute("SELECT 1 FROM trades WHERE id=?", (ref,)).fetchone():
+        raise ValueError(f"order #{ref} does not exist")
+
+    def add_note(text):
+        con.execute("UPDATE trades SET note = TRIM(COALESCE(note,'') || ' | ' || ?, ' |') WHERE id=?", (text, ref))
+
+    if k == "new":
+        wq, w = _qty_item(d["want"])
+        gq, g = _qty_item(d["give"])
+        gold = int(float(d["gold"])) if d.get("gold") else None
+        cur = con.execute("INSERT INTO trades (placed_at, want, want_qty, give, give_qty, gold, note) VALUES (?,?,?,?,?,?,?)",
+                          (at, resolve(w), wq, resolve(g), gq, gold, f"{note} {tag}".strip()))
+        return f"logged as #{cur.lastrowid}"
+    if k in ("filled", "cancel"):
+        con.execute("UPDATE trades SET status=?, filled_at=? WHERE id=?", ("filled" if k == "filled" else "cancelled", at, ref))
+        add_note(f"{at[11:16]} {k} {tag} {note}".strip())
+        return f"#{ref} marked {'filled' if k == 'filled' else 'cancelled'}"
+    if k == "partial":
+        paid = f" for {d['paid']}" if d.get("paid") else ""
+        con.execute("UPDATE trades SET status='partial' WHERE id=?", (ref,))
+        add_note(f"{at[11:16]} got {d.get('got')}{paid} {tag} {note}".strip())
+        return f"#{ref} partial: got {d.get('got')}{paid}"
+    if k == "note":
+        if ref is None:
+            raise ValueError("free note without an order; read it and act by hand")
+        add_note(f"{at[11:16]} {note} {tag}")
+        return f"note added to #{ref}"
+    raise ValueError(f"unknown kind {k!r}")
+
+
+def inbox(con, apply=False):
+    import json
+    issues = json.loads(_gh("issue", "list", "--label", "trade", "--state", "open", "--limit", "100",
+                            "--json", "number,title,body,createdAt"))
+    if not issues:
+        print("inbox empty")
+        return
+    for i in sorted(issues, key=lambda x: x["number"]):
+        d = parse_report(i["body"])
+        print(f"gh#{i['number']} {i['createdAt']}  {i['title']}")
+        if d is None:
+            print("    not a form report; read it and handle by hand:\n    " + (i["body"] or "").replace("\n", "\n    "))
+            continue
+        if not apply:
+            print("    " + ", ".join(f"{k}={v}" for k, v in d.items() if v))
+            continue
+        try:
+            msg = apply_report(con, d, i["number"])
+        except Exception as e:  # leave the issue open for a human look
+            print(f"    NOT applied: {e}")
+            continue
+        con.commit()
+        export_csv(con)
+        _gh("issue", "close", str(i["number"]), "--comment", f"Logged by orbflow: {msg}")
+        print(f"    applied: {msg} (issue closed)")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -77,6 +167,8 @@ def main(argv=None):
     sub.add_parser("list")
     sub.add_parser("calib")
     sub.add_parser("import", help="replace the trades table with data/trades.csv")
+    a_in = sub.add_parser("inbox", help="trade reports sent from the board (GitHub issues with label 'trade')")
+    a_in.add_argument("--apply", action="store_true", help="log them in the trades table and close the issues")
     a = ap.parse_args(argv)
     con = connect()
     con.executescript(SCHEMA)
@@ -91,6 +183,8 @@ def main(argv=None):
                     ("filled" if a.cmd == "fill" else "cancelled", a.at or _now(), a.id))
     elif a.cmd == "gold":
         con.execute("UPDATE trades SET gold=? WHERE id=?", (a.gold, a.id))
+    elif a.cmd == "inbox":
+        inbox(con, apply=a.apply)
     elif a.cmd == "import":
         print("imported", import_csv(con, replace=True), "trades")
     elif a.cmd == "list":
