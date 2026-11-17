@@ -24,6 +24,34 @@ CREATE TABLE IF NOT EXISTS trades (
 """
 
 
+CSV_PATH = __import__("pathlib").Path(__file__).resolve().parent.parent / "data" / "trades.csv"
+COLS = ["id", "placed_at", "filled_at", "status", "want", "want_qty", "give", "give_qty", "gold", "note"]
+
+
+def import_csv(con, replace=False):
+    """Load data/trades.csv into the trades table (only if empty, unless replace)."""
+    import csv
+    con.executescript(SCHEMA)
+    if not CSV_PATH.exists():
+        return 0
+    if con.execute("SELECT COUNT(*) FROM trades").fetchone()[0] and not replace:
+        return 0
+    rows = [[(r[c] if r[c] != "" else None) for c in COLS] for r in csv.DictReader(open(CSV_PATH, encoding="utf-8"))]
+    con.execute("DELETE FROM trades")
+    con.executemany(f"INSERT INTO trades VALUES ({','.join('?' * len(COLS))})", rows)
+    con.commit()
+    return len(rows)
+
+
+def export_csv(con):
+    import csv
+    cur = con.execute("SELECT * FROM trades ORDER BY id")
+    with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow([d[0] for d in cur.description])
+        w.writerows(cur)
+
+
 def _now():
     return dt.datetime.now().strftime("%Y-%m-%dT%H:%M")
 
@@ -48,6 +76,7 @@ def main(argv=None):
         p.add_argument("--at", default=None)
     sub.add_parser("list")
     sub.add_parser("calib")
+    sub.add_parser("import", help="replace the trades table with data/trades.csv")
     a = ap.parse_args(argv)
     con = connect()
     con.executescript(SCHEMA)
@@ -62,6 +91,8 @@ def main(argv=None):
                     ("filled" if a.cmd == "fill" else "cancelled", a.at or _now(), a.id))
     elif a.cmd == "gold":
         con.execute("UPDATE trades SET gold=? WHERE id=?", (a.gold, a.id))
+    elif a.cmd == "import":
+        print("imported", import_csv(con, replace=True), "trades")
     elif a.cmd == "list":
         for r in con.execute("SELECT * FROM trades ORDER BY id"):
             print(dict(r))
@@ -75,6 +106,8 @@ def main(argv=None):
             print(f"  #{r['id']} want {r['want_qty']:g} {r['want']} (give {r['give_qty']:g} {r['give']}): "
                   f"{r['gold']} gold = {r['gold'] / r['want_qty']:.0f}/unit")
     con.commit()
+    if a.cmd in ("add", "fill", "cancel", "gold"):
+        export_csv(con)   # keep the committed CSV in sync
 
 
 if __name__ == "__main__":

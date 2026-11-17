@@ -19,12 +19,15 @@ from __future__ import annotations
 
 import argparse
 import collections
+import csv
 import datetime as dt
 import time
+from pathlib import Path
 
 from .client import get_json
 from .db import connect
 
+MAP_CSV = Path(__file__).resolve().parent.parent / "data" / "meta_map.csv"   # committed: lets a fresh DB name items
 URL = "https://web.poecdn.com/api/currency-exchange/poe2/{ts}"
 LEAGUE = "Forbidden Rites"
 SEED = {  # sure anchors; the rest is learned
@@ -101,6 +104,9 @@ def build_map(con, verbose=True):
     votes = collections.defaultdict(collections.Counter)
     for meta, api in SEED.items():
         votes[meta][api] += 1000
+    if MAP_CSV.exists():  # what earlier runs learned
+        for row in csv.DictReader(open(MAP_CSV, encoding="utf-8")):
+            votes[row["meta"]][row["api_id"]] += int(row["votes"])
     # find which GGG hour each scout snapshot is: the div/ex pair volumes are unique enough
     div, ex = "Metadata/Items/Currency/CurrencyModValues", "Metadata/Items/Currency/CurrencyAddModToRare"
     ggg_key = {}
@@ -134,6 +140,10 @@ def build_map(con, verbose=True):
             con.execute("INSERT INTO meta_map VALUES (?,?,?)", (meta, api, v))
             n += 1
     con.commit()
+    with open(MAP_CSV, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["meta", "api_id", "votes"])
+        w.writerows(sorted(tuple(r) for r in con.execute("SELECT meta, api_id, MIN(votes, 1000) FROM meta_map")))
     total = con.execute("SELECT COUNT(DISTINCT a) FROM cx_hours").fetchone()[0]
     if verbose:
         print(f"matched {len(snap_ts)} scout snapshots to GGG hours; mapped {n} metadata ids (of ~{total})")
@@ -142,6 +152,10 @@ def build_map(con, verbose=True):
 
 def meta_map(con):
     init(con)
+    if not con.execute("SELECT 1 FROM meta_map LIMIT 1").fetchone() and MAP_CSV.exists():
+        rows = [(r["meta"], r["api_id"], int(r["votes"])) for r in csv.DictReader(open(MAP_CSV, encoding="utf-8"))]
+        con.executemany("INSERT OR REPLACE INTO meta_map VALUES (?,?,?)", rows)
+        con.commit()
     return dict(con.execute("SELECT meta, api_id FROM meta_map"))
 
 

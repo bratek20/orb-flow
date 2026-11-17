@@ -229,8 +229,10 @@ def build(league, collect=False, last_n=24, min_gap=1.3, refresh_s=600):
         from .ggg import build_map, sync
         con = connect()
         collect_pairs(Scout(league), con)      # poe2scout snapshot: keeps the name mapping learning
-        if sync(con, hours=max(last_n, 3), league=league, verbose=False):
+        if sync(con, hours=last_n + 2, league=league, verbose=False):
             build_map(con, verbose=False)
+    from .trades import import_csv
+    import_csv(connect())   # no-op unless the trades table is empty (fresh DB on GitHub)
     rows, info, _ = find_rounds(connect(), league, last_n=last_n, min_gap=min_gap)
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(render(rows, info, league, refresh_s), encoding="utf-8")
