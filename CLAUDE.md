@@ -60,7 +60,7 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
   the normal price is 12-16 chaos (one dump hour) -> no edge.
 - Cancelling does NOT refund gold: every reprice pays the fee again. Price orders once, carefully.
 - Before calling a gap real, check it hour by hour (`ggg --show`), not as an average. Then ask the player for the live book.
-- The player reports trades as "want_qty want - give_qty give (gold)", e.g. "10 monsters - 6 chaos (4500)".
+- The player reports trades as "want_qty want : give_qty give (gold)", e.g. "10 monsters : 6 chaos (4500)" (colon, player's preference since 2026-11-18; use the same format when quoting ratios back).
   Log every one with `trades add` (gold included) and note fills.
 
 ## Where we left off (2026-11-17, morning)

@@ -28,3 +28,4 @@ id,placed_at,filled_at,status,want,want_qty,give,give_qty,gold,note
 27,2026-11-17T13:43,,open,divine,20.0,omen-of-chaotic-monsters,140.0,16000,sell monsters 7/div; replaces #25 (63) + #26 (75) in one order
 28,2026-11-17T13:52,2026-11-17T13:52,filled,omen-of-chaotic-monsters,95.0,chaos,57.0,42750,instant buy 1.67/chaos
 29,2026-11-17T13:52,,open,divine,14.0,omen-of-chaotic-monsters,98.0,11200,sell monsters 7/div (95 from #28 + 3 extra)
+30,2026-11-18T06:33,,open,omen-of-the-blessed,20.0,chaos,40.0,16000,bid 2 chaos each; test of chaos->blessed->div route (board top pick); blessed fee 800/unit
