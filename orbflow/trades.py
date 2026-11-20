@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import math
 
 from .db import connect
 
@@ -146,6 +147,14 @@ def inbox(con, apply=False):
         print(f"    applied: {msg} (issue closed)")
 
 
+def _min_lot(want_qty, give_qty):
+    """Smallest whole-unit piece of an order (want, give), or None for fractional quantities."""
+    if want_qty != int(want_qty) or give_qty != int(give_qty) or want_qty <= 0 or give_qty <= 0:
+        return None
+    g = math.gcd(int(want_qty), int(give_qty))
+    return want_qty / g, give_qty / g
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -178,6 +187,10 @@ def main(argv=None):
         cur = con.execute("INSERT INTO trades (placed_at, want, want_qty, give, give_qty, gold, note) VALUES (?,?,?,?,?,?,?)",
                           (a.at or _now(), a.want, a.want_qty, a.give, a.give_qty, a.gold, a.note))
         print("trade id", cur.lastrowid)
+        lot = _min_lot(a.want_qty, a.give_qty)
+        if lot and lot[1] > 40 and lot[1] >= a.give_qty / 2:
+            print(f"  warning: smallest partial fill is {lot[0]:g} : {lot[1]:g} (ratio does not split); "
+                  f"next time pick one with `python -m orbflow.ratio`")
     elif a.cmd in ("fill", "cancel"):
         con.execute("UPDATE trades SET status=?, filled_at=? WHERE id=?",
                     ("filled" if a.cmd == "fill" else "cancelled", a.at or _now(), a.id))

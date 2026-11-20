@@ -238,3 +238,6 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - New ex->div leads, both thin, gold fee unknown:
   g-iron-rune: ex avg 5-20 (low 1-4), div 0.6-0.67 most hours (16h: 0.33-0.5), 3-49/h, div stock ~390. ~30x gap.
   uncut-skill-gem-19: ex low 6 every hour (avg 9-25), div 0.33-0.5 (2-3/div), 5-80/h, stock ~470. ~15x gap.
+- **Order sizing (player's insight, 2026-11-20):** a partial fill must be whole units on both sides at the exact ratio, so the
+  smallest piece is the ratio in lowest terms. 23 div : 190 monsters is all-or-nothing; 22 div : 187 monsters (11 x 2:17)
+  fills 17 monsters at a time. New tool: `python -m orbflow.ratio div monsters 1:8.3 --have 190`.

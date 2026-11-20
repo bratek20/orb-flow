@@ -29,6 +29,9 @@ No scheduled tasks. Data is only downloaded while we work.
   `.github/workflows/board.yml` rebuilds it hourly at :25; repo https://github.com/bratek20/orb-flow, public).
 - `python -m orbflow.cycles --legs "div>chaos@10.4" "chaos>monsters@1.67" "monsters>div@/7"`: one full round with gold per leg
   (use the player's live ratios). `--scan` is the older poe2scout-based version of the board.
+- `python -m orbflow.ratio <want> <give> <want:give> --have N`: order sizing. Lists ratios near the target that reduce to
+  small lots (partial fills need whole units on both sides, so 23:190 is all-or-nothing; 22:187 = 11 x 2:17). Use it before
+  quoting any order to the player. `trades add` warns when a logged order does not split.
 - `python -m orbflow.liquidity <item> --qty N`: units/h per market, queue size, time-to-fill estimate
 - `python -m orbflow.trades add|fill|cancel|gold|list|calib`: log of real orders (ground truth for fills AND gold fees;
   `chains.gold_table` reads fees from here). After each change re-export data/trades.csv (it's committed; the DB is not).
@@ -59,6 +62,7 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
   chaos->monsters->div (1.67/chaos -> 7/div, ~7k gold/div, best now); armour-infuser worked once at 6 chaos but
   the normal price is 12-16 chaos (one dump hour) -> no edge.
 - Cancelling does NOT refund gold: every reprice pays the fee again. Price orders once, carefully.
+- Quote orders with ratios that split into small lots (`orbflow.ratio`), e.g. 2:17 or 1:8, never 23:190.
 - Before calling a gap real, check it hour by hour (`ggg --show`), not as an average. Then ask the player for the live book.
 - The player reports trades as "want_qty want : give_qty give (gold)", e.g. "10 monsters : 6 chaos (4500)" (colon, player's preference since 2026-11-18; use the same format when quoting ratios back).
   Log every one with `trades add` (gold included) and note fills.
