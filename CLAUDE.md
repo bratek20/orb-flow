@@ -31,7 +31,8 @@ No scheduled tasks. Data is only downloaded while we work.
   (use the player's live ratios). `--scan` is the older poe2scout-based version of the board.
 - `python -m orbflow.ratio <want> <give> <want:give> --have N`: order sizing. Lists ratios near the target that reduce to
   small lots (partial fills need whole units on both sides, so 23:190 is all-or-nothing; 22:187 = 11 x 2:17). Use it before
-  quoting any order to the player. `trades add` warns when a logged order does not split.
+  quoting any order to the player. `--ahead-of 1:8` lists the cheapest ratios that jump the best competing offer.
+  `trades add` warns when a logged order does not split.
 - `python -m orbflow.liquidity <item> --qty N`: units/h per market, queue size, time-to-fill estimate
 - `python -m orbflow.trades add|fill|cancel|gold|list|calib`: log of real orders (ground truth for fills AND gold fees;
   `chains.gold_table` reads fees from here). After each change re-export data/trades.csv (it's committed; the DB is not).
@@ -63,6 +64,8 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
   the normal price is 12-16 chaos (one dump hour) -> no edge.
 - Cancelling does NOT refund gold: every reprice pays the fee again. Price orders once, carefully.
 - Quote orders with ratios that split into small lots (`orbflow.ratio`), e.g. 2:17 or 1:8, never 23:190.
+  Price beats time in the book: a better ratio fills first, so being first at 1:8 is worth nothing once someone posts 2:17.
+  Competitors use 1:N ratios 93% of the time; a non-1:N slot just ahead of the best (3:25 vs 1:8) is rarely undercut.
 - Before calling a gap real, check it hour by hour (`ggg --show`), not as an average. Then ask the player for the live book.
 - The player reports trades as "want_qty want : give_qty give (gold)", e.g. "10 monsters : 6 chaos (4500)" (colon, player's preference since 2026-11-18; use the same format when quoting ratios back).
   Log every one with `trades add` (gold included) and note fills.

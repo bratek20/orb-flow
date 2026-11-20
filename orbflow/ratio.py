@@ -8,6 +8,13 @@ Ratios are written like the player reports them: want : give.
     python -m orbflow.ratio div monsters 1:8.3 --have 190          # selling 190 monsters near 8.3 per div
     python -m orbflow.ratio monsters chaos 2:1 --have 100          # buying monsters with 100 chaos near 2 per chaos
     python -m orbflow.ratio div monsters 1:8 --have 190 --tol 0.08 --max-lot 30
+    python -m orbflow.ratio div monsters --ahead-of 1:8 --have 190   # cheapest ways to jump the best competing offer
+
+How the book behaves (from GGG hourly low/high ratios, 2026-11-20; no official doc found):
+- PRICE priority beats time: in hours when someone listed 2:17 monsters per div, nothing traded at 1:8, even though
+  1:8 sellers were in the book. Being first in line at 1:8 does not help once anyone posts a better ratio.
+- 93% of all best/worst traded ratios are 1:N, ~4% 2:N. Competitors almost never use finer ratios, so a 3:25 or 2:17
+  slot between 1:8 and 1:9 is rarely undercut by a small step; they jump to the next simple ratio instead.
 Options: --tol (relative window around the target, default 5%), --max-lot (largest lot on either side, default 40),
 --show N rows. Gold = units WANTED x fee of the wanted item (logged fees from the trades table win).
 """
@@ -54,7 +61,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("want")
     ap.add_argument("give")
-    ap.add_argument("ratio", help="target want:give, e.g. 1:8.3")
+    ap.add_argument("ratio", nargs="?", help="target want:give, e.g. 1:8.3")
+    ap.add_argument("--ahead-of", help="best competing want:give; list ratios just better for the other side")
     ap.add_argument("--have", type=float, required=True, help="units of the give item you put in")
     ap.add_argument("--tol", type=float, default=0.05)
     ap.add_argument("--max-lot", type=int, default=40)
@@ -62,6 +70,21 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     want, give = resolve(a.want), resolve(a.give)
+    if a.ahead_of:
+        comp = parse_ratio(a.ahead_of)
+        rows = [c for c in candidates(comp * (1 + a.tol / 2), a.have, a.tol / 2 + 1e-9, a.max_lot, a.max_lot)
+                if c["price"] > comp + 1e-9]
+        rows.sort(key=lambda c: (round(c["price"] / comp - 1, 3), c["b"] if c["b"] >= c["a"] else c["a"]))
+        print(f"ahead of {a.ahead_of} ({comp:g} {short(give)} per {short(want)}): cheapest steps, have {a.have:g} {short(give)}")
+        print(f"  {'lot':>9}  {'per want':>8}  {'you concede':>11}  {'order (want : give)':>26}  {'left':>5}  {'1:N?':>4}")
+        for c in rows[:a.show]:
+            order = f"{c['want']:g} {short(want)} : {c['give']:g} {short(give)}"
+            simple = "yes" if 1 in (c["a"], c["b"]) else "no"
+            print(f"  {c['a']:>4}:{c['b']:<4}  {c['price']:8.3f}  {c['price'] / comp - 1:+10.1%}  {order:>26}  {c['left']:5g}  {simple:>4}")
+        print("  1:N? no = a slot competitors rarely use (93% of trades are 1:N), so it is less likely to be undercut")
+        return
+    if not a.ratio:
+        ap.error("give a target ratio or --ahead-of")
     target = parse_ratio(a.ratio)
     gpu = gold_table(connect()).get(want)
     fee_note = "" if gpu is not None else " (fee unknown, default used)"

@@ -241,3 +241,12 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - **Order sizing (player's insight, 2026-11-20):** a partial fill must be whole units on both sides at the exact ratio, so the
   smallest piece is the ratio in lowest terms. 23 div : 190 monsters is all-or-nothing; 22 div : 187 monsters (11 x 2:17)
   fills 17 monsters at a time. New tool: `python -m orbflow.ratio div monsters 1:8.3 --have 190`.
+- **Book priority (GGG hourly low/high ratios, monsters vs div, 11-19 17h .. 11-20 16h):** GGG reports traded ratios as
+  integer pairs. Best seller ratio was 1:8 most hours; in 14-16h it was 2:17 and NO trade happened at 1:8 although 1:8 sellers
+  were listed -> price priority beats time priority. Worst ratio each hour 1:19-1:20 (dumps into low bids), so the hourly
+  average (~12/div) understates what a patient seller gets.
+- Across all pairs (24h), 93.1% of best/worst traded ratios are 1:N and 3.7% are 2:N. Competitors almost never use finer
+  ratios, so a 3:25 or 4:33 slot just ahead of 1:8 is rarely undercut by a small step. `orbflow.ratio --ahead-of 1:8`.
+- Web search (2026-11-20) found no official GGG description of matching. Unconfirmed player/guide claims: an order closes
+  early when the rest cannot fill at the exact ratio (ratios like x.33 round badly); an order can complete "early" when it was
+  filled at a better rate than posted (suggests the resting order's ratio is used). pathofexile.com is blocked here, unverified.
