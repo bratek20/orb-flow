@@ -230,3 +230,11 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   (0.21-0.43 div). #37 (sell at 1.9 div each) is far above any trade (high 1.0).
 - Uncut-skill-gem-18: ex 0.1-0.3 ex, div side fixed 0.05-0.067 (15-20/div) at 15-105/h, single price = queue. Fee unknown.
   Uncut-spirit-gem-18: chaos ~2, div 0.3-0.5 but thin (0-58/h) and one 0.067 dump hour. Both: tiny tests at most.
+
+## 2026-11-20 afternoon (GGG hours 05h .. 16h UTC)
+- Monsters holds: chaos low 0.5 every hour (130-690/h); div side high 0.118-0.125, avg 0.08-0.11 (9-12/div), 70-390/h.
+  Sell price to use now ~8.5-9/div (0.118 top). Ex side low drifting up 13 -> 16 ex.
+- Regal holds: ex low 0.33-0.40 (2.5-3 regal/ex); div top 0.014-0.016 (63-70/div), 200-3100/h.
+- New ex->div leads, both thin, gold fee unknown:
+  g-iron-rune: ex avg 5-20 (low 1-4), div 0.6-0.67 most hours (16h: 0.33-0.5), 3-49/h, div stock ~390. ~30x gap.
+  uncut-skill-gem-19: ex low 6 every hour (avg 9-25), div 0.33-0.5 (2-3/div), 5-80/h, stock ~470. ~15x gap.
