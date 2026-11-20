@@ -218,3 +218,15 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   So every reprice pays the full fee again: choose the price once, and prefer fewer, bigger orders over many small edits.
   For sell orders into div the fee is 800/div, so a reprice costs ~0.1-0.2 div of gold per 20 div order; for buy orders of omens
   (450/unit) it is much more.
+
+## 2026-11-20 morning (GGG hours 11-19 17h .. 11-20 04h UTC)
+- Player holdings: 1138 ex, 351 chaos, 218 div, ~700k gold. Fill status of orders #30-55 still unknown.
+- Money: div 11.5-11.9 chaos, ~470-530 ex. Chaos ~44 ex.
+- **Monsters route is back and deeper**: chaos side 0.50-0.55 chaos each (low 0.5 every hour, 200-630/h),
+  div side 0.10-0.125 div (8-10/div, 200-510/h, ~4.7k queue). Round at 1.9/chaos and 9/div: ~1.4x profit per div, ~9.5k gold/div
+  (8/div: ~8k). Ex side 12-13 ex low (thin, ~20-100/h, stock ~36): at 14 ex it is ~5.6k gold/div (good use of idle ex).
+- Regal: ex side low 0.5-0.57 ex (2/ex), div side 0.014-0.016 (~65-70/div), 2-9k/h. ex->regal->div ~17x per ex, ~9.8k gold/div.
+- **Blessed edge gone**: div side fell from 0.72-0.86 div (11-19 17-21h) to 0.25-0.40 div; chaos side rose to 2.5-5 chaos
+  (0.21-0.43 div). #37 (sell at 1.9 div each) is far above any trade (high 1.0).
+- Uncut-skill-gem-18: ex 0.1-0.3 ex, div side fixed 0.05-0.067 (15-20/div) at 15-105/h, single price = queue. Fee unknown.
+  Uncut-spirit-gem-18: chaos ~2, div 0.3-0.5 but thin (0-58/h) and one 0.067 dump hour. Both: tiny tests at most.
