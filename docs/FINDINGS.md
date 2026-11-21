@@ -250,3 +250,10 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
 - Web search (2026-11-20) found no official GGG description of matching. Unconfirmed player/guide claims: an order closes
   early when the rest cannot fill at the exact ratio (ratios like x.33 round badly); an order can complete "early" when it was
   filled at a better rate than posted (suggests the resting order's ratio is used). pathofexile.com is blocked here, unverified.
+
+## 2026-11-21 early (GGG hours 11-20 17h .. 11-21 03h UTC)
+- Player: 285 div, 224 chaos, 954 ex, ~1.0M gold. New order #56: 20 div : 185 monsters (9.25/div), sellers at 1:9.43 ahead.
+- Monsters: chaos low 0.5 every hour (100-690/h); div side high 0.111-0.125 (8-9/div), avg 0.09-0.12, 130-570/h;
+  ex side low 13 ex most hours (15-85/h). ex at ~500/div makes ex->monsters->div ~4x on ex at ~6.6k gold/div.
+- Regal weakening on the div side: top 0.013 (77/div), last hour 0.009 (111/div). ex side still 2-3 regal/ex.
+- Reprice math: reposting a 20-div sell costs 16k gold again, more than the 0.5 div gained by moving 9.25 -> 9.5. Wait instead.
