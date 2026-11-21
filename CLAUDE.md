@@ -46,6 +46,9 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 ## Player context
 - Started with a 100 ex budget (~50 chaos total). Gold: ~1.4M at start. The gold fee is per unit WANTED (see FINDINGS).
 - Wants to start small, verify each strategy in game, then scale up.
+- **Wants QUICK advice on the current market** (2026-11-21). Do NOT ask about old orders, fill status or trade history,
+  and don't bring old trades up. Assume earlier guesses about holdings/orders are right. Log trades only when the player
+  reports them. Keep answers short: what to buy/sell now, exact orders (want : give), gold, one-line why.
 - Analysis only: never automate in-game actions (GGG ToS).
 
 ## Data caveats (important)
@@ -72,8 +75,8 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 
 ## Where we left off (2026-11-21, midday)
 - Holdings (player, 11-21 early): 285 div, 224 chaos, 954 ex, ~1.0M gold. Open: #56 20 div : 185 monsters (9.25/div).
-  Old orders #30-55 (from screenshots) still have unknown fill status; ask the player to confirm or cancel them.
 - Monsters is the main route (chaos 0.5 -> div 9-10/div). Regal's div side is shaky (59-111/div).
-- Tests suggested 11-21: eshs-cat (3/chaos -> 5-6/div) and chance (8-10/chaos -> 1:15) - gold fees unknown, ask.
+- Test suggested 11-21: eshs-cat (3/chaos -> 5-6/div), gold fee unknown. Chance skipped (fee 1000/unit).
+- Monsters sell side sliding: best competing 1:8 -> 1:9.5 (11-21). Stop adding monsters past ~1:11.
 - Ideas not done: alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.
