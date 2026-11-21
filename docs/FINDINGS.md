@@ -257,3 +257,12 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   ex side low 13 ex most hours (15-85/h). ex at ~500/div makes ex->monsters->div ~4x on ex at ~6.6k gold/div.
 - Regal weakening on the div side: top 0.013 (77/div), last hour 0.009 (111/div). ex side still 2-3 regal/ex.
 - Reprice math: reposting a 20-div sell costs 16k gold again, more than the 0.5 div gained by moving 9.25 -> 9.5. Wait instead.
+
+## 2026-11-21 midday (GGG hours 02h .. 11h UTC)
+- Monsters: chaos low 0.5 every hour; div side best 0.100-0.111 (9-10/div), 05-08h only 0.083 (12/div); 160-530/h.
+  Price drifting down from 8-8.5/div (11-20) to 9-10/div. Ex side low 12-13 ex every hour.
+- Regal div side weak: 0.009 (111/div) 03-07h, back to 0.012-0.017 (59-83/div) at 11h. Ex side 2.3-3 regal/ex.
+- New lead **eshs-cat**: chaos side 0.30-0.33 chaos (3/chaos, stock ~7k), div side 0.167-0.2 (5-6/div), 27-430/h, queue ~2.3k.
+  ~6x gap, stable most hours. Ex side 4 ex (thin). Gold fee unknown (test).
+- New lead **chance**: chaos 0.10-0.125 chaos (8-10/chaos), div side fixed 0.067 (1:15) most hours (earlier 1:11), 75-560/h,
+  queue ~6.7k at 1:15. ~6x gap. Gold fee unknown.

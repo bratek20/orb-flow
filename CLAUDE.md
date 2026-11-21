@@ -70,11 +70,10 @@ prints the table (docs/NAMES.txt), and every CLI accepts short names.
 - The player reports trades as "want_qty want : give_qty give (gold)", e.g. "10 monsters : 6 chaos (4500)" (colon, player's preference since 2026-11-18; use the same format when quoting ratios back).
   Log every one with `trades add` (gold included) and note fills.
 
-## Where we left off (2026-11-17, morning)
-- Holdings (approx): ~45 div, ~180 chaos, 58 ex; gold ~0.75M (estimate, ask). Open orders (see `trades list`):
-  #18 140 echoes -> 28 div (5/div, ambitious; fallback 6, never below 8), #22 7 monsters left -> 1 div,
-  #23 buy 30 monsters for 18 chaos. Player also wanted a p-charging-rune (~6-8 div) for personal use.
-- Next: scale monsters if #23 fills and sells hold 7/div (bids of 50-100); test sin-necromancy (ex 1-2.5 -> div 0.05-0.08,
-  gold fee unknown); fill in unknown gold fees ("gold?" on the board) for catalysts/omens.
-- Ideas not done: alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times, `trades import` from CSV.
+## Where we left off (2026-11-21, midday)
+- Holdings (player, 11-21 early): 285 div, 224 chaos, 954 ex, ~1.0M gold. Open: #56 20 div : 185 monsters (9.25/div).
+  Old orders #30-55 (from screenshots) still have unknown fill status; ask the player to confirm or cancel them.
+- Monsters is the main route (chaos 0.5 -> div 9-10/div). Regal's div side is shaky (59-111/div).
+- Tests suggested 11-21: eshs-cat (3/chaos -> 5-6/div) and chance (8-10/chaos -> 1:15) - gold fees unknown, ask.
+- Ideas not done: alerts when a proven route crosses a threshold, calibrate FILL_SHARE from fill times.
 - Trade #9 in the trades table is an aggregate summary row, not a single order.
