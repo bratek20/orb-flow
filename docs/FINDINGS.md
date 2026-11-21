@@ -266,3 +266,7 @@ Live numbers (div->ex 597, regal bid 2.45/ex, sell 82 regal/div), per 1 div put 
   ~6x gap, stable most hours. Ex side 4 ex (thin). Gold fee unknown (test).
 - New lead **chance**: chaos 0.10-0.125 chaos (8-10/chaos), div side fixed 0.067 (1:15) most hours (earlier 1:11), 75-560/h,
   queue ~6.7k at 1:15. ~6x gap. Gold fee unknown.
+- **Chance gold fee = 1000 per unit** (player, in-game, 2026-11-21: 200 chance : 20 chaos = 200k gold). Chance round
+  (10/chaos -> 15.5/div) becomes ~19k gold per div of profit, about 2x worse than monsters (~10k). Skipped.
+  Pattern: cheap high-count currencies (gcp, echoes, sin-necromancy, chance) are 1000/unit, so a big "units per div"
+  multiplier means a big gold bill. Ask for the fee BEFORE quoting an order on any item with an unknown fee.

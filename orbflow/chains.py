@@ -31,7 +31,8 @@ FILL_SHARE = 0.5   # calibrate! first data point (regal ex bid) suggested ~0.7-1
 HAIRCUT = 0.15     # we will not get the average price on both legs; leave room
 # Gold fee model (from 6 logged orders, 2026-11-15): fee = units WANTED x per-unit gold of the wanted item.
 # The item you give and the value of the order do not matter.
-KNOWN_GOLD_PER_UNIT = {"exalted": 120, "regal": 120, "chaos": 160, "gcp": 1000, "divine": 800}
+KNOWN_GOLD_PER_UNIT = {"exalted": 120, "regal": 120, "chaos": 160, "gcp": 1000, "divine": 800,
+                       "chance": 1000}  # chance: in-game fee shown 2026-11-21 (200 units = 200k)
 DEFAULT_GOLD_PER_UNIT = 300   # unknown items: a guess. Log real fees to replace it.
 
 
